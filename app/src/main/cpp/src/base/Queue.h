@@ -9,7 +9,7 @@
  * @tparam TItem 
  */
 template<class TItem>
-class Queue {
+class TQueue {
   public:
     void push(const TItem& item);
     TItem pop();
@@ -24,7 +24,7 @@ class Queue {
     unsigned long long size;
 
     /**
-     * @brief Mutual exlusion for `Queue::conditionVariable`
+     * @brief Mutual exlusion for `TQueue::conditionVariable`
      * @note Can be modified in `const` methods
      */
     mutable std::mutex mutex;
@@ -41,7 +41,7 @@ class Queue {
  * @warning Blocks until there is a space in the queue
  */
 template<class TItem>
-void Queue<TItem>::push(const TItem& item) {
+void TQueue<TItem>::push(const TItem& item) {
     std::unique_lock<std::mutex> lock(mutex);
     // Wait until there is a space in the queue
     conditionVariable.wait(lock, [this] {
@@ -59,7 +59,7 @@ void Queue<TItem>::push(const TItem& item) {
  * @warning Blocks until there is an item in the queue
  */
 template<class TItem>
-TItem Queue<TItem>::pop() {
+TItem TQueue<TItem>::pop() {
     std::unique_lock<std::mutex> lock(mutex);
     // Wait until there is an item in the queue
     conditionVariable.wait(lock, [this] {

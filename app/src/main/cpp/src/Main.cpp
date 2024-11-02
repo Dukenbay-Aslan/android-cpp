@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include "Queue.h"
+#include "base/Queue.h"
 
 int main() {
-    Queue<int> q;
+    TQueue<int> q;
     q.push(1);
     auto x = q.pop();
     std::cout << x << std::endl;
