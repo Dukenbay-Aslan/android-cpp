@@ -1,3 +1,6 @@
+tmp/
+
+# GitHub generated
 *.iml
 .gradle
 /local.properties
