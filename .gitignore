@@ -1,4 +1,8 @@
+# Temporary files, sandbox/playground
 tmp/
+
+# Visual Studio Code
+.vscode/
 
 # GitHub generated
 *.iml
