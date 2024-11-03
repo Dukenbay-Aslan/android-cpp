@@ -31,26 +31,51 @@ std::mutex mutex;
 std::condition_variable conditionVariable;
 
 /**
- * @brief Constructor
- * @param port Port to run on
+ * @brief Default construct with
+ * `TApplication::port_ = 0`,
+ * `TApplication::state_ = UNKNOWN_APP_STATE`
  */
-Application::Application(unsigned int port)
-    : port_(port)
-    , state_(EAppState::STOP)
+TApplication::TApplication()
+    : port_(0)
+    , state_(EAppState::UNKNOWN_APP_STATE)
 {
 
 }
 
 /**
+ * @brief Constructor
+ * @param port Port to run on
+ */
+TApplication::TApplication(unsigned int port)
+    : port_(port)
+    , state_(EAppState::UNKNOWN_APP_STATE)
+{
+
+}
+
+/**
+ * @brief Set the port to run an application on
+ * @param port Port to run on
+ * @return `TApplication::state_ != UNKNOWN_APP_STATE`
+ */
+bool TApplication::operator()(unsigned int port) {
+    if (state_ != EAppState::UNKNOWN_APP_STATE) {
+        port_ = port;
+        return true;
+    }
+    return false;
+}
+
+/**
  * @brief Start receiving requests
  */
-void Application::run() {
+void TApplication::run() {
     if (size > maxSize) {
         state_ = EAppState::WAIT;
     }
     std::unique_lock<std::mutex> lock(mutex);
     conditionVariable.wait(lock, [] {
-        log::error << "(Application::Application) " << 
+        log::error << "(TApplication::TApplication) " << 
         "Maximum size of running applications has been " <<
         "reached. Application for port " << port_ << " not run. " <<
         "Waiting for any application to be stopped";
@@ -58,6 +83,7 @@ void Application::run() {
     });
     size++;
     state_ = EAppState::RUN;
+    app_.signal_clear();
     lock.unlock();
     conditionVariable.notify_one();
     app_
@@ -70,7 +96,7 @@ void Application::run() {
 /**
  * @brief Stop receiving requests
  */
-void Application::stop() {
+void TApplication::stop() {
     state_ = EAppState::STOP;
     size--;
     app_.stop();
@@ -81,9 +107,10 @@ void Application::stop() {
  * @param endpoint Endpoint of a route
  * @param method HTTP method
  * @param function Function to apply on requests
- * @warning `function` needs to take `const crow::request&` and `crow::response`
+ * @warning `function` needs to take `const crow::request&`,
+ * `crow::response` and return `void`
  */
-void Application::addRoute(const std::string& endpoint,
+void TApplication::addRoute(const std::string& endpoint,
         crow::HTTPMethod method,
         const std::function<void(const crow::request&, crow::response&)>& function) {
     CROW_ROUTE(app_, endpoint)
@@ -98,21 +125,21 @@ void Application::addRoute(const std::string& endpoint,
  * @brief Get the state of an application
  * @return `RUN`, `STOP` or `UNKNOWN_APP_STATE`
  */
-const EAppState Application::state() const {
+const EAppState TApplication::state() const {
     return state_;
 }
 
 /**
  * @brief Get endpoints of an application
  */
-const std::vector<std::string>& Application::endpoints() const {
+const std::vector<std::string>& TApplication::endpoints() const {
     return endpoints_;
 }
 
 /**
  * @brief Get a port that the application runs on
  */
-const unsigned int& Application::port() const {
+const unsigned int& TApplication::port() const {
     return port_;
 }
 

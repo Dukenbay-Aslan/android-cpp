@@ -19,14 +19,17 @@ enum EAppState {
     STOP,
     WAIT,
     SIZE_APP_STATE,
+    UNKNOWN_APP_STATE,
 };
 
 /**
  * @brief Application to receive manual requests
  */
-class Application {
+class TApplication {
   public:
-    Application(unsigned int port);
+    TApplication();
+    TApplication(unsigned int port);
+    bool operator()(unsigned int port);
 
     void run();
     void stop();
