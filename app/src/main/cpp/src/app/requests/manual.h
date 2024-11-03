@@ -1,11 +1,10 @@
 #pragma once
 
+#include <functional>
+#include <string>
 #include <string_view>
-/*
-#include <cpr.h>
+#include <vector>
 #include <crow/crow.h>
-#include <nlohmann/json.hpp>
-*/
 
 /**
  * @brief Receive manual requests from a client
@@ -18,29 +17,36 @@ namespace NManualRequests {
 enum EAppState {
     RUN = 0,
     STOP,
+    WAIT,
     SIZE_APP_STATE,
-    UNKNOWN_APP_STATE
+    UNKNOWN_APP_STATE,
 };
 
 /**
  * @brief Application to receive manual requests
  */
-class Application {
+class TApplication {
   public:
-    Application();
-    Application(std::string_view endpoint, unsigned int port);
+    TApplication();
+    TApplication(unsigned int port);
+    bool operator()(unsigned int port);
 
     void run();
     void stop();
 
+    void addRoute(const std::string& endpoint,
+        crow::HTTPMethod method,
+        const std::function<void(const crow::request&, crow::response&)>& function);
+
     // Member getters
-    const std::string& endpoint();
-    const unsigned int& port();
+    const EAppState state() const;
+    const std::vector<std::string>& endpoints() const;
+    const unsigned int& port() const;
 
     /**
      * @brief State of an application
      */
-    EAppState state = EAppState::STOP;
+    EAppState state_ = EAppState::UNKNOWN_APP_STATE;
   private:
     /**
      * @brief Underlying application
@@ -50,18 +56,8 @@ class Application {
     /**
      * @brief Endpoint of an application
      */
-    std::string endpoint_;
-    unsigned int port_;
-
-    bool operator==(const Application& other) const;
+    std::vector<std::string> endpoints_ = {};
+    unsigned int port_ = 0;
 };
-
-void addApp(std::string_view endpoint, unsigned int port);
-void runApp(Application& app);
-void stopApp(Application& app);
-void removeApp(Application& app);
-
-void run();
-void stop();
 
 } // namespace NManualRequests
