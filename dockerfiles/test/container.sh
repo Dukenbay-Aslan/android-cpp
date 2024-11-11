@@ -12,6 +12,6 @@ docker run \
     --privileged \
     -it \
     --network host \
-    --volume=$PWD/app/src/main/cpp:/cpp \
+    --volume=$PWD:/android-cpp \
     --name "$2" \
     "$1"

@@ -5,12 +5,8 @@ FROM ubuntu:20.04
 # Instructing apt to operate in non-interactive mode
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Copying C++ code
-COPY ./app/src/main/cpp/src/ /cpp/src
-COPY ./app/src/main/cpp/CMakeLists.txt /cpp/CMakeLists.txt
-
 # Setting the working directory
-WORKDIR /cpp
+WORKDIR /android-cpp
 
 # Running a command when the container starts
 CMD ["/bin/bash"]

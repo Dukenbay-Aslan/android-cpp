@@ -80,11 +80,11 @@ RUN \
 &&  cd /tmp \
 &&  rm -rf cpr
 
-# Mount C++ code part in docker container:
-# --volume=$PWD/app/src/main/cpp:/cpp
+# Mount code in docker container:
+# --volume=$PWD:/android-cpp
 
 # Setting the working directory
-WORKDIR /cpp
+WORKDIR /android-cpp
 
 # Running a command when the container starts
 CMD ["/bin/bash"]
