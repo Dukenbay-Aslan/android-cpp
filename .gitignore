@@ -1,6 +1,9 @@
 # Temporary files, sandbox/playground
 tmp/
 
+# Building directories
+build/
+
 # Visual Studio Code
 .vscode/
 
