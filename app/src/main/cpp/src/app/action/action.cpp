@@ -1,7 +1,7 @@
 #include <utility>
 #include <nlohmann/json.hpp>
 
-#include "Action.h"
+#include "action.h"
 #include "../../base/mappers/Mappers.h"
 
 namespace NAction {
@@ -14,7 +14,7 @@ TAction::TAction(const crow::request&& request)
     : request_(std::move(request))
     , empty_(true)
 {
-    remoteIp_ = request_.remote_ip;
+    remoteIp_ = request_.remote_ip_address;
     httpMethod_ = request_.method;
 
     json_ = nlohmann::json::parse(request_.body);

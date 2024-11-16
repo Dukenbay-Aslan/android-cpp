@@ -1,7 +1,8 @@
 #pragma once
 
 #include <string>
-#include <crow/crow.h>
+#include <nlohmann/json.hpp>
+#include <crow.h>
 #include <iostream>
 
 #include "../../base/Structs.h"
@@ -63,7 +64,7 @@ class TAction {
     // Role of an actor
     ERole role_ = ERole::UNKNOWN_ROLE;
     // JSON body of a requested action
-    nlohmann::json json_ = nlohmann::json::object;
+    nlohmann::json json_ = nlohmann::json::object();
 };
 
 } // namespace NAction

@@ -113,7 +113,7 @@ void TApplication::stop() {
 void TApplication::addRoute(const std::string& endpoint,
         crow::HTTPMethod method,
         const std::function<void(const crow::request&, crow::response&)>& function) {
-    CROW_ROUTE(app_, endpoint)
+    app_.route_dynamic(endpoint)
     .methods(method)
     ([function](const crow::request& request, crow::response& response) {
         function(request, response);
