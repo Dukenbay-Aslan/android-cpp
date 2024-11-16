@@ -10,23 +10,29 @@
 SActions::SActions(unsigned int port)
 {
     app(8080);
-    app.addRoute("/actions", crow::HTTPMethod::POST, process);
+    app.addRoute(
+        "/actions",
+        crow::HTTPMethod::POST,
+        process
+    );
 }
 
 /**
  * @brief Process requested actions
+ * @param request Request to parse to an action
+ * @param response Response to fill and send to a client
  */
 void SActions::process(const crow::request& request,
         crow::response& response) {
     NAction::TAction action(std::move(request));
     if (action.empty()) {
-        reponse.code(400);
-        response.body("Bad JSON");
+        response.code = 400;
+        response.body = "Bad JSON";
         response.end();
         return;
     }
-    response.code(200);
-    response.body("Received an action");
+    response.code = 200;
+    response.body = "Received an action";
     response.end();
     return;
 }

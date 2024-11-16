@@ -49,21 +49,41 @@ class TAction {
     const nlohmann::json& json() const;
     const bool& empty() const;
 
-    friend std::ostream& operator<<(std::ostream& outputStream,
+    friend std::ostream& operator<<(std::ostream& os,
         const TAction& action);
   private:
-    crow::request request_ = {}; // Received request
-    // Whether a request has been successfully parsed
+    /**
+     * @brief Received request
+     */
+    crow::request request_ = {};
+    /**
+     * @brief Whether a request has been
+     * successfully parsed
+     */
     bool empty_;
-    crow::HTTPMethod httpMethod_; // Method of a request
-    std::string remoteIp_ = "0.0.0.0"; // IP address of an actor
-    // Type of an action
+    /**
+     * @brief Method of a request
+     */
+    crow::HTTPMethod httpMethod_;
+    /**
+     * @brief IP address of an actor
+     */
+    std::string remoteIp_ = "0.0.0.0";
+    /**
+     * @brief Type of an action
+     */
     EActionType actionType_ = EActionType::UNKNOWN_ACTION_TYPE;
-    // Subject to take an action on
+    /**
+     * @brief Subject to take an action on
+     */
     EEntity entity_ = EEntity::UNKNOWN_ENTITY;
-    // Role of an actor
+    /**
+     * @brief Role of an actor
+     */
     ERole role_ = ERole::UNKNOWN_ROLE;
-    // JSON body of a requested action
+    /**
+     * @brief JSON body of a requested action
+     */
     nlohmann::json json_ = nlohmann::json::object();
 };
 
