@@ -4,7 +4,7 @@
 
 > ⓘ **Info**
 >
-> (Testing) This docker file also copies whole code
+> This docker file also copies whole code
 
 ## Main packages
 - [OpenJDK](https://openjdk.org/): The place to collaborate on an open-source implementation of the Java Platform, Standard Edition, and related projects.
@@ -28,9 +28,9 @@
 ## Building
 `docker build -t android-cpp-base-image:latest -f dockerfiles/Dockerfile .`
 
-> :warning: **Warning**
+> ⚠️ **Warning**
 > 
-> Pay attention to dot (.) at the end of this command, which helps to set docker build context.
+> (Testing) Pay attention to dot (.) at the end of this command, which helps to set docker build context.
 
 ## Running
 `docker run --privileged -it --network host --volume=$PWD:/android-cpp --name android-cpp android-cpp-base-image:latest`
@@ -41,9 +41,9 @@
 ## Building
 `docker build -t minimal:latest -f dockerfiles/test/Dockerfile-1.0-minimal .`
 
-> :warning: **Warning**
+> ⚠️ **Warning**
 > 
-> Pay attention to dot (.) at the end of this command, which helps to set docker build context.
+> (Testing) Pay attention to dot (.) at the end of this command, which helps to set docker build context.
 
 ## Running
 `docker run --privileged -it --network host --volume=$PWD:/android-cpp --name minimal minimal:latest`
