@@ -3,8 +3,14 @@
 #include <unordered_map>
 
 #include "manual.h"
+#include "../../base/config/Config.h"
 
 namespace NManualRequests {
+
+/**
+ * @brief Messages logger
+ */
+TLogger log("NManualRequests");
 
 /**
  * @brief Number of applications
@@ -84,7 +90,7 @@ void TApplication::run() {
     }
     std::unique_lock<std::mutex> lock(mutex);
     conditionVariable.wait(lock, [this] {
-        log::error << "(TApplication::TApplication) " <<
+        log.error << "(TApplication::run) " <<
             "Maximum size of running applications has been " <<
             "reached. Application for port " << port_ <<
             " not run. Waiting for any application to be stopped";
@@ -96,7 +102,7 @@ void TApplication::run() {
     lock.unlock();
     conditionVariable.notify_one();
     app_
-        .bindaddr(Config::ipAddress())
+        .bindaddr(Config::ipHost())
         .multithreaded()
         .port(port_)
         .run();
