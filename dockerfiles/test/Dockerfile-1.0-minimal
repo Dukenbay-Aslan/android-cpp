@@ -1,0 +1,12 @@
+# Installing Ubuntu 20.04 LTS as the base image
+FROM ubuntu:20.04
+
+# Setting environment variables
+# Instructing apt to operate in non-interactive mode
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Setting the working directory
+WORKDIR /android-cpp
+
+# Running a command when the container starts
+CMD ["/bin/bash"]

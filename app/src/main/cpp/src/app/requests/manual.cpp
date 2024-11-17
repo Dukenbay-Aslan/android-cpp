@@ -3,8 +3,14 @@
 #include <unordered_map>
 
 #include "manual.h"
+#include "../../base/config/Config.h"
 
 namespace NManualRequests {
+
+/**
+ * @brief Messages logger
+ */
+TLogger log("NManualRequests");
 
 /**
  * @brief Number of applications
@@ -50,7 +56,11 @@ TApplication::TApplication(unsigned int port)
     : port_(port)
     , state_(EAppState::UNKNOWN_APP_STATE)
 {
-
+    /* This method clears all default signal handlers
+    of a crow::SimpleApp. When the SIGINT (^C) is hit
+    at runtime that signal will be sent to
+    signalHandler function in Main.cpp. */
+    app_.signal_clear();
 }
 
 /**
@@ -60,6 +70,11 @@ TApplication::TApplication(unsigned int port)
  */
 bool TApplication::operator()(unsigned int port) {
     if (state_ != EAppState::UNKNOWN_APP_STATE) {
+        /* This method clears all default signal handlers
+        of a crow::SimpleApp. When the SIGINT (^C) is hit
+        at runtime that signal will be sent to
+        signalHandler function in Main.cpp. */
+        app_.signal_clear();
         port_ = port;
         return true;
     }
@@ -74,11 +89,11 @@ void TApplication::run() {
         state_ = EAppState::WAIT;
     }
     std::unique_lock<std::mutex> lock(mutex);
-    conditionVariable.wait(lock, [] {
-        log::error << "(TApplication::TApplication) " << 
-        "Maximum size of running applications has been " <<
-        "reached. Application for port " << port_ << " not run. " <<
-        "Waiting for any application to be stopped";
+    conditionVariable.wait(lock, [this] {
+        log.error << "(TApplication::run) " <<
+            "Maximum size of running applications has been " <<
+            "reached. Application for port " << port_ <<
+            " not run. Waiting for any application to be stopped";
         return (size <= maxSize);
     });
     size++;
@@ -87,7 +102,7 @@ void TApplication::run() {
     lock.unlock();
     conditionVariable.notify_one();
     app_
-        .bindaddr(Config::ipAddress())
+        .bindaddr(Config::ipHost())
         .multithreaded()
         .port(port_)
         .run();
@@ -108,16 +123,19 @@ void TApplication::stop() {
  * @param method HTTP method
  * @param function Function to apply on requests
  * @warning `function` needs to take `const crow::request&`,
- * `crow::response` and return `void`
+ * `crow::response&` and return `void`
  */
 void TApplication::addRoute(const std::string& endpoint,
         crow::HTTPMethod method,
-        const std::function<void(const crow::request&, crow::response&)>& function) {
-    CROW_ROUTE(app_, endpoint)
-    .methods(method)
-    ([function](const crow::request& request, crow::response& response) {
-        function(request, response);
-    });
+        const std::function<
+            void(const crow::request&,
+                crow::response&)>& function) {
+    app_.route_dynamic(endpoint)
+        .methods(method)
+        ([function](const crow::request& request,
+                crow::response& response) {
+            function(request, response);
+        });
     endpoints_.push_back(endpoint);
 }
 

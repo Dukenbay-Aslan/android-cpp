@@ -17,31 +17,31 @@ enum EActionType {
  */
 enum EEntity {
     /**
-     * Group of roles
+     * @brief Group of roles
      */
     GROUP = 0,
     /**
-     * Account of role
+     * @brief Account of role
      */
     ACCOUNT,
     /**
-     * Structured information about lessons
+     * @brief Structured information about lessons
      */
     SCHEDULE,
     /**
-     * Entity with Video, Article, Marks and others
+     * @brief Entity with Video, Article, Marks and others
      */
     LESSON,
     /**
-     * Percentage of an academic performance of a Student
+     * @brief Percentage of an academic performance of a Student
      */
     MARK,
     /**
-     * `for-loop`
+     * @brief `for-loop`
      */
     SIZE_ENTITY,
     /**
-     * Handle situations
+     * @brief Handle situations
      */
     UNKNOWN_ENTITY,
 };
@@ -51,7 +51,7 @@ enum EEntity {
  */
 enum ERole {
     /**
-     * Permissions:
+     * @brief Permissions:
      * - Create/Update/Delete a group
      * - Create/Update/Delete a account
      * - Create/Update/Delete a schedule
@@ -61,29 +61,41 @@ enum ERole {
      */
     ADMIN = 0,
     /**
-     * Permissions:
+     * @brief Permissions:
      * - Create/Update/Delete a group
      * - Create/Update/Delete a account
      * - Create/Update/Delete a schedule
      */
     MANAGER,
     /**
-     * Permissions:
+     * @brief Permissions:
      * - Create/Update/Delete a lesson
      * - Create/Update/Delete a mark
      */
     TEACHER,
     /**
-     * Permissions:
+     * @brief Permissions:
      * - View a lesson
      */
     STUDENT,
     /**
-     * `for-loop`
+     * @brief `for-loop`
      */
     SIZE_ROLE,
     /**
-     * Handle situations
+     * @brief Handle situations
      */
     UNKNOWN_ROLE,
+};
+
+/**
+ * @brief Logging levels
+ */
+enum ELogLevel {
+    ERROR = 0,
+    WARNING,
+    INFO,
+    DEBUG,
+    SIZE_LOG_LEVEL,
+    UNKNOWN_LOG_LEVEL
 };

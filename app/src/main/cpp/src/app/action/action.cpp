@@ -1,8 +1,8 @@
 #include <utility>
 #include <nlohmann/json.hpp>
 
-#include "Action.h"
-#include "../../base/mappers/Mappers.h"
+#include "action.h"
+#include "../../base/helpers/mappers.h"
 
 namespace NAction {
 
@@ -14,27 +14,33 @@ TAction::TAction(const crow::request&& request)
     : request_(std::move(request))
     , empty_(true)
 {
-    remoteIp_ = request_.remote_ip;
+    remoteIp_ = request_.remote_ip_address;
     httpMethod_ = request_.method;
 
     json_ = nlohmann::json::parse(request_.body);
     if (json_.contains(NAction::constants::REQUEST_KEY_ACTION_TYPE)) {
-        actionTypeStr = json_[NAction::constants::REQUEST_KEY_ACTION_TYPE].get<std::string>();
-        actionType_ = NMappers::strToActionType(actionTypeStr);
+        auto actionTypeStr =
+            json_[NAction::constants::REQUEST_KEY_ACTION_TYPE]
+            .get<std::string>();
+        actionType_ = mappers::fromString::actionType(actionTypeStr);
         empty_ = false;
     } else {
         empty_ = true;
     }
     if (json_.contains(NAction::constants::REQUEST_KEY_ENTITY)) {
-        entityStr = json_[NAction::constants::REQUEST_KEY_ENTITY].get<std::string>();
-        entity_ = NMappers::strToEntity(entityStr);
+        auto entityStr =
+            json_[NAction::constants::REQUEST_KEY_ENTITY]
+            .get<std::string>();
+        entity_ = mappers::fromString::entity(entityStr);
         empty_ = false;
     } else {
         empty_ = true;
     }
     if (json_.contains(NAction::constants::REQUEST_KEY_ROLE)) {
-        roleStr = json_[NAction::constants::REQUEST_KEY_ROLE].get<std::string>();
-        role_ = NMappers::strToRole(roleStr);
+        auto roleStr =
+            json_[NAction::constants::REQUEST_KEY_ROLE]
+            .get<std::string>();
+        role_ = mappers::fromString::role(roleStr);
         empty_ = false;
     } else {
         empty_ = true;
@@ -93,7 +99,7 @@ const ERole& TAction::role() const {
  * @brief Get the JSON body of a requested action
  * @return `TAction::json_`
  */
-const nlohmann::json TAction::json() const {
+const nlohmann::json& TAction::json() const {
     return json_;
 }
 
@@ -107,17 +113,21 @@ const bool& TAction::empty() const {
 
 /**
  * @brief Print an action information to `std::ostream`
- * @param outputStream Stream to concatenate to
+ * @param os Stream to concatenate to
  * @param action Action to print
  * @return Stream with the concatenated action information
  */
-std::ostream& operator<<(std::ostream& outputStream,
+std::ostream& operator<<(std::ostream& os,
     const TAction& action) {
     os <<
-        "IP address of an actor: " << action.remoteIp() << '\n' <<
-        "Type of a request of an actor: " << NMappers::actionTypeToStr(action.actionType()) << '\n' <<
-        "Subject to take an action on: " << NMappers::entityToStr(action.entity()) << '\n' <<
-        "Role of an actor: " << NMappers::roleToStr(action.role()) << '\n';
+    "IP address of an actor: " <<
+        action.remoteIp() << '\n' <<
+    "Type of a request of an actor: " <<
+        mappers::toString::actionType(action.actionType()) << '\n' <<
+    "Subject to take an action on: " <<
+        mappers::toString::entity(action.entity()) << '\n' <<
+    "Role of an actor: " <<
+        mappers::toString::role(action.role()) << '\n';
 }
 
 } // namespace NAction
