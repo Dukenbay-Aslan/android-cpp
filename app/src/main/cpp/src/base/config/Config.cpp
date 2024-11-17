@@ -1,6 +1,7 @@
 #include <fstream>
 
 #include "Config.h"
+#include "../helpers/mappers.h"
 #include "../helpers/valid.h"
 
 namespace Config {

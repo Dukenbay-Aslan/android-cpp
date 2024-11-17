@@ -2,7 +2,7 @@
 #include <nlohmann/json.hpp>
 
 #include "action.h"
-#include "../../base/mappers/Mappers.h"
+#include "../../base/helpers/mappers.h"
 
 namespace NAction {
 
@@ -22,7 +22,7 @@ TAction::TAction(const crow::request&& request)
         auto actionTypeStr =
             json_[NAction::constants::REQUEST_KEY_ACTION_TYPE]
             .get<std::string>();
-        actionType_ = NMappers::strToActionType(actionTypeStr);
+        actionType_ = mappers::fromString::actionType(actionTypeStr);
         empty_ = false;
     } else {
         empty_ = true;
@@ -31,7 +31,7 @@ TAction::TAction(const crow::request&& request)
         auto entityStr =
             json_[NAction::constants::REQUEST_KEY_ENTITY]
             .get<std::string>();
-        entity_ = NMappers::strToEntity(entityStr);
+        entity_ = mappers::fromString::entity(entityStr);
         empty_ = false;
     } else {
         empty_ = true;
@@ -40,7 +40,7 @@ TAction::TAction(const crow::request&& request)
         auto roleStr =
             json_[NAction::constants::REQUEST_KEY_ROLE]
             .get<std::string>();
-        role_ = NMappers::strToRole(roleStr);
+        role_ = mappers::fromString::role(roleStr);
         empty_ = false;
     } else {
         empty_ = true;
@@ -123,11 +123,11 @@ std::ostream& operator<<(std::ostream& os,
     "IP address of an actor: " <<
         action.remoteIp() << '\n' <<
     "Type of a request of an actor: " <<
-        NMappers::actionTypeToStr(action.actionType()) << '\n' <<
+        mappers::toString::actionType(action.actionType()) << '\n' <<
     "Subject to take an action on: " <<
-        NMappers::entityToStr(action.entity()) << '\n' <<
+        mappers::toString::entity(action.entity()) << '\n' <<
     "Role of an actor: " <<
-        NMappers::roleToStr(action.role()) << '\n';
+        mappers::toString::role(action.role()) << '\n';
 }
 
 } // namespace NAction

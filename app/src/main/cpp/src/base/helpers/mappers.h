@@ -5,15 +5,39 @@
 
 #include "../Structs.h"
 
-namespace NMappers {
+/**
+ * @brief Helper functions
+ * to convert custom structures
+ * from/to `std::string`
+ */
+namespace mappers {
 
-std::string actionTypeToStr(const EActionType& actionType);
-EActionType strToActionType(std::string_view actionType);
+/**
+ * @brief Helper functions
+ * to convert custom structures
+ * from `std::string`
+ */
+namespace fromString {
 
-std::string entityToStr(const EEntity& entity);
-EEntity strToEntity(std::string_view entity);
+EActionType actionType(std::string_view actionType);
+EEntity entity(std::string_view entity);
+ERole role(std::string_view role);
+ELogLevel logLevel(std::string_view level);
 
-std::string roleToStr(const ERole& role);
-ERole strToRole(std::string_view role);
+} // namespace fromString
 
-} // namespace NMappers
+/**
+ * @brief Helper functions
+ * to convert custom structures
+ * to `std::string`
+ */
+namespace toString {
+
+std::string actionType(const EActionType& actionType);
+std::string entity(const EEntity& entity);
+std::string role(const ERole& role);
+std::string logLevel(const ELogLevel& level);
+
+} // namespace toString
+
+} // namespace mappers
