@@ -2,7 +2,7 @@
 
 [Dockerfile](../dockerfiles/Dockerfile) builds a base image `android-cpp-base-image` upon [Ubuntu 20.04 LTS](https://wiki.ubuntu.com/FocalFossa/ReleaseNotes).
 
-> :info:
+> ⓘ **Info**
 >
 > (Testing) This docker file also copies whole code
 
@@ -28,9 +28,9 @@
 ## Building
 `docker build -t android-cpp-base-image:latest -f dockerfiles/Dockerfile .`
 
-> :warning:
+> :warning: **Warning**
 > 
-> (Testing) Pay attention to dot (.) at the end of this command, which helps to set docker build context.
+> Pay attention to dot (.) at the end of this command, which helps to set docker build context.
 
 ## Running
 `docker run --privileged -it --network host --volume=$PWD:/android-cpp --name android-cpp android-cpp-base-image:latest`
@@ -41,9 +41,9 @@
 ## Building
 `docker build -t minimal:latest -f dockerfiles/test/Dockerfile-1.0-minimal .`
 
-> :warning:
+> :warning: **Warning**
 > 
-> (Testing) Pay attention to dot (.) at the end of this command, which helps to set docker build context.
+> Pay attention to dot (.) at the end of this command, which helps to set docker build context.
 
 ## Running
 `docker run --privileged -it --network host --volume=$PWD:/android-cpp --name minimal minimal:latest`
