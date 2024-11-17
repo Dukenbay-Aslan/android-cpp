@@ -4,6 +4,8 @@
 #include <string>
 #include <nlohmann/json.hpp>
 
+#include "../Structs.h"
+
 /**
  * @brief Control configurations
  */
@@ -13,5 +15,6 @@ bool parse(const std::filesystem::path& path);
 nlohmann::json json();
 std::string ipHost();
 unsigned int portSActions();
+ELogLevel logLevel();
 
 } // namespace Config

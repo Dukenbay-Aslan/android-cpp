@@ -20,6 +20,11 @@ const std::string KEY_IP_HOST = "ip_host";
  * to run the service `SActions` on
  */
 const std::string KEY_PORT_SACTIONS = "port_sactions";
+/**
+ * @brief JSON key for a general
+ * logging level
+ */
+const std::string KEY_LOG_LEVEL = "log_level";
 
 } // namespace constants
 
@@ -43,6 +48,10 @@ std::string ipHost_ = "";
  * `SActions` on
  */
 unsigned int portSActions_ = -1;
+/**
+ * @brief General logging level
+ */
+ELogLevel logLevel_ = ELogLevel::DEBUG;
 
 /**
  * @brief Parse configurations
@@ -92,6 +101,12 @@ bool parse(const std::filesystem::path& path) {
         portSActions_ = 8080;
     }
 
+    if (json_.contains(Config::constants::KEY_LOG_LEVEL)) {
+        auto logLevelStr = json_[Config::constants::KEY_LOG_LEVEL].get<std::string>();
+        logLevel_ = mappers::fromString::logLevel(logLevelStr);
+    } else {
+        logLevel_ = ELogLevel::DEBUG;
+    }
     return true;
 }
 
@@ -119,6 +134,14 @@ std::string ipHost() {
  */
 unsigned int portSActions() {
     return portSActions_;
+}
+
+/**
+ * @brief Get the general logging level
+ * @return `Config::logLevel_`
+ */
+ELogLevel logLevel() {
+    return logLevel_;
 }
 
 } // namespace Config
