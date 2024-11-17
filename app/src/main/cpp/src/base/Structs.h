@@ -87,3 +87,13 @@ enum ERole {
      */
     UNKNOWN_ROLE,
 };
+
+/**
+ * @brief Logging levels
+ */
+enum ELogLevel {
+    ERROR = 0,
+    WARNING,
+    INFO,
+    DEBUG
+};
