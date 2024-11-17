@@ -1,6 +1,7 @@
 #include <fstream>
 
 #include "Config.h"
+#include "../helpers/valid.h"
 
 namespace Config {
 
@@ -75,6 +76,11 @@ bool parse(const std::filesystem::path& path) {
             ipHost_ = "";
             return false;
         }
+    } else {
+        log.error << "(parse) " <<
+            "Error in parseing configurations. " <<
+            "Reason: Can not find ip_host key\n";
+        return false;
     }
     if (json_.contains(Config::constants::KEY_PORT_SACTIONS)) {
         portSActions_ = json_[Config::constants::KEY_PORT_SACTIONS].get<unsigned int>();
@@ -82,6 +88,8 @@ bool parse(const std::filesystem::path& path) {
             portSActions_ = -1;
             return false;
         }
+    } else {
+        portSActions_ = 8080;
     }
 
     return true;
