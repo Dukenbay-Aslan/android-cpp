@@ -2,15 +2,9 @@
 
 [Dockerfile](../dockerfiles/Dockerfile) builds a base image `android-cpp-base-image` upon [Ubuntu 20.04 LTS](https://wiki.ubuntu.com/FocalFossa/ReleaseNotes).
 
-<div style="border: 1px solid #17a2b8; background-color: #e8f7fc; padding: 15px; border-radius: 5px; display: flex; align-items: center; font-family: Arial, sans-serif;">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#17a2b8" width="24px" height="24px" style="margin-right: 10px;">
-    <path d="M0 0h24v24H0z" fill="none"/>
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v2h2V7zm0 4h-2v6h2v-6z"/>
-  </svg>
-  <span style="color: #0c5460; font-weight: bold; font-size: 14px;">
-    INFO (Testing):<br>This docker file also copies whole code
-  </span>
-</div>
+> :info:
+>
+> (Testing) This docker file also copies whole code
 
 ## Main packages
 - [OpenJDK](https://openjdk.org/): The place to collaborate on an open-source implementation of the Java Platform, Standard Edition, and related projects.
@@ -34,15 +28,9 @@
 ## Building
 `docker build -t android-cpp-base-image:latest -f dockerfiles/Dockerfile .`
 
-<div style="border: 1px solid #f5c500; background-color: #fffbe6; padding: 15px; border-radius: 5px; display: flex; align-items: center; font-family: Arial, sans-serif;">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#f5c500" width="24px" height="24px" style="margin-right: 10px;">
-    <path d="M0 0h24v24H0z" fill="none"/>
-    <path d="M1 21h22L12 2 1 21zm13-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
-  </svg>
-  <span style="color: #856404; font-weight: bold; font-size: 14px;">
-    WARNING (Testing):<br>Pay attention to dot (.) at the end of this command, which helps to set docker build context.
-  </span>
-</div>
+> :warning:
+> 
+> (Testing) Pay attention to dot (.) at the end of this command, which helps to set docker build context.
 
 ## Running
 `docker run --privileged -it --network host --volume=$PWD:/android-cpp --name android-cpp android-cpp-base-image:latest`
@@ -53,15 +41,9 @@
 ## Building
 `docker build -t minimal:latest -f dockerfiles/test/Dockerfile-1.0-minimal .`
 
-<div style="border: 1px solid #f5c500; background-color: #fffbe6; padding: 15px; border-radius: 5px; display: flex; align-items: center; font-family: Arial, sans-serif;">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#f5c500" width="24px" height="24px" style="margin-right: 10px;">
-    <path d="M0 0h24v24H0z" fill="none"/>
-    <path d="M1 21h22L12 2 1 21zm13-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
-  </svg>
-  <span style="color: #856404; font-weight: bold; font-size: 14px;">
-    WARNING (Testing):<br>Pay attention to dot (.) at the end of this command, which helps to set docker build context.
-  </span>
-</div>
+> :warning:
+> 
+> (Testing) Pay attention to dot (.) at the end of this command, which helps to set docker build context.
 
 ## Running
 `docker run --privileged -it --network host --volume=$PWD:/android-cpp --name minimal minimal:latest`
