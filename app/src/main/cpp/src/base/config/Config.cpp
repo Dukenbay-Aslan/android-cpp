@@ -3,6 +3,7 @@
 #include "Config.h"
 #include "../helpers/mappers.h"
 #include "../helpers/valid.h"
+#include "../logger/logger.h"
 
 namespace Config {
 
