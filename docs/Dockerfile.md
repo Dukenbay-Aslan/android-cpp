@@ -30,7 +30,7 @@
 
 > ⚠️ **Warning**
 > 
-> (Testing) Pay attention to dot (.) at the end of this command, which helps to set docker build context.
+> Pay attention to dot (.) at the end of this command, which helps to set docker build context.
 
 ## Running
 `docker run --privileged -it --network host --volume=$PWD:/android-cpp --name android-cpp android-cpp-base-image:latest`
@@ -43,7 +43,7 @@
 
 > ⚠️ **Warning**
 > 
-> (Testing) Pay attention to dot (.) at the end of this command, which helps to set docker build context.
+> Pay attention to dot (.) at the end of this command, which helps to set docker build context.
 
 ## Running
 `docker run --privileged -it --network host --volume=$PWD:/android-cpp --name minimal minimal:latest`
