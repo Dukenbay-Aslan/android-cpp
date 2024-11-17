@@ -36,7 +36,9 @@ class TApplication {
 
     void addRoute(const std::string& endpoint,
         crow::HTTPMethod method,
-        const std::function<void(const crow::request&, crow::response&)>& function);
+        const std::function<
+            void(const crow::request&,
+                crow::response&)>& function);
 
     // Member getters
     const EAppState state() const;

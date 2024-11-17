@@ -40,7 +40,7 @@ class TQueue {
  * @brief Push an item to the queue
  * @tparam TItem 
  * @param item Item to push
- * @warning Blocks until there is a space in the queue
+ * @warning Blocks until there is space in the queue
  */
 template<class TItem>
 void TQueue<TItem>::push(const TItem& item) {

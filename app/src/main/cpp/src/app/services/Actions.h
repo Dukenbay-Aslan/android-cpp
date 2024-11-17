@@ -18,8 +18,7 @@ class SActions : public IService {
     void shutdown() override;
   private:
     /**
-     * @brief HTTP/HTTPS application
-     * to receive actions
+     * @brief Application to receive actions
      */
     NManualRequests::TApplication app;
     /**
