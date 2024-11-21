@@ -43,8 +43,8 @@ std::condition_variable conditionVariable;
  * `TApplication::state_ = UNKNOWN_APP_STATE`
  */
 TApplication::TApplication()
-    : port_(0)
-    , state_(EAppState::UNKNOWN_APP_STATE)
+    : state_(EAppState::UNKNOWN_APP_STATE)
+    , port_(0)
 {
 
 }
@@ -54,8 +54,8 @@ TApplication::TApplication()
  * @param port Port to run on
  */
 TApplication::TApplication(unsigned int port)
-    : port_(port)
-    , state_(EAppState::UNKNOWN_APP_STATE)
+    : state_(EAppState::UNKNOWN_APP_STATE)
+    , port_(port)
 {
     /* This method clears all default signal handlers
     of a crow::SimpleApp. When the SIGINT (^C) is hit
@@ -119,44 +119,25 @@ void TApplication::stop() {
 }
 
 /**
- * @brief Add a route to receive requests
- * @param endpoint Endpoint of a route
- * @param method HTTP method
- * @param function Function to apply on requests
- * @warning `function` needs to take `const crow::request&`,
- * `crow::response&` and return `void`
- */
-void TApplication::addRoute(const std::string& endpoint,
-        crow::HTTPMethod method,
-        const std::function<
-            void(const crow::request&,
-                crow::response&)>& function) {
-    app_.route_dynamic(endpoint)
-        .methods(method)
-        ([function](const crow::request& request,
-                crow::response& response) {
-            function(request, response);
-        });
-    endpoints_.push_back(endpoint);
-}
-
-/**
  * @brief Get the state of an application
  * @return `RUN`, `STOP` or `UNKNOWN_APP_STATE`
  */
-const EAppState TApplication::state() const {
+const EAppState& TApplication::state() const {
     return state_;
 }
 
 /**
- * @brief Get endpoints of an application
+ * @brief Get the endpoints of an application
+ * @return `TApplication::endpoints_`
  */
-const std::vector<std::string>& TApplication::endpoints() const {
+const std::unordered_set<std::string>&
+        TApplication::endpoints() const {
     return endpoints_;
 }
 
 /**
- * @brief Get a port that the application runs on
+ * @brief Get a port that the application is run on
+ * @return `TApplication::port_`
  */
 const unsigned int& TApplication::port() const {
     return port_;

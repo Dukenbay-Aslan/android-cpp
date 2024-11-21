@@ -17,7 +17,7 @@ class SActions : public IService {
     /**
      * @brief Application to receive actions
      */
-    NManualRequests::TApplication app;
+    NManualRequests::TApplication application;
     /**
      * @brief Queue of requested actions
      */
