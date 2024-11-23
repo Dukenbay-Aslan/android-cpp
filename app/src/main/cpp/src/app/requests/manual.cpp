@@ -80,20 +80,28 @@ bool TApplication::operator()(unsigned int port) {
  * @brief Start receiving requests
  */
 void TApplication::run() {
+    if (state_ == EAppState::RUN) {
+        log.info <<
+            "(TApplication::run) " <<
+            "Application is already " <<
+            "in run state\n";
+        return;
+    }
     if (size > maxSize) {
         state_ = EAppState::WAIT;
     }
     std::unique_lock<std::mutex> lock(mutex);
     conditionVariable.wait(lock, [this] {
-        log.error << "(TApplication::run) " <<
-            "Maximum size of running applications has been " <<
-            "reached. Application for port " << port_ <<
-            " not run. Waiting for any application to be stopped";
+        log.error <<
+            "(TApplication::run) " <<
+            "Error in running an application. Reason: " <<
+            "Maximum size of running applications " <<
+            "reached. Application on port " << port_ <<
+            " not run. Waiting for any application to stop\n";
         return (size <= maxSize);
     });
-    size++;
     state_ = EAppState::RUN;
-    app_.signal_clear();
+    size++;
     lock.unlock();
     conditionVariable.notify_one();
     app_
@@ -107,6 +115,22 @@ void TApplication::run() {
  * @brief Stop receiving requests
  */
 void TApplication::stop() {
+    if (state_ == EAppState::STOP) {
+        log.info <<
+            "(TApplication::stop) " <<
+            "Application is already " <<
+            "in stop state\n";
+        return;
+    }
+    if (state_ != EAppState::RUN) {
+        log.error <<
+            "(TApplication::stop) " <<
+            "Error in stopping " <<
+            "an application. Reason: " <<
+            "Application is not " <<
+            "in run state\n";
+        return;
+    }
     state_ = EAppState::STOP;
     size--;
     app_.stop();
