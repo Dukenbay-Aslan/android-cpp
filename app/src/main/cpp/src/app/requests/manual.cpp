@@ -145,15 +145,6 @@ const EAppState& TApplication::state() const {
 }
 
 /**
- * @brief Get the endpoints of an application
- * @return `TApplication::endpoints_`
- */
-const std::unordered_set<std::string>&
-        TApplication::endpoints() const {
-    return endpoints_;
-}
-
-/**
  * @brief Get a port that the application is run on
  * @return `TApplication::port_`
  */

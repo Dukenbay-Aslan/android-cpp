@@ -25,11 +25,9 @@ enum EAppState {
 };
 
 /**
- * @brief Application to receive manual requests.
- * Extended `crow::SimpleApp` with tracking endpoints.
- * @throws Runtime error when an endpoint is added twice
+ * @brief Application to receive manual requests
  */
-class TApplication : public crow::SimpleApp {
+class TApplication {
   public:
     TApplication();
     TApplication(unsigned int port);
@@ -40,38 +38,7 @@ class TApplication : public crow::SimpleApp {
 
     // Member getters
     const EAppState& state() const;
-    const std::unordered_set<std::string>& endpoints() const;
     const unsigned int& port() const;
-
-    /**
-     * @brief Track added endpoints on call
-     * of `CROW_ROUTE`, `CROW_WEBSOCKET_ROUTE`
-     * @tparam ...Args
-     * @param endpoint Endpoint of a new route 
-     * @return Extended `crow::SimpleApp::route()`
-     */
-    template<typename... Args>
-    auto route(const std::string& endpoint,
-            Args&&... args) {
-        // If endpoint is already registered
-        if (endpoints_.find(endpoint) != endpoints_.end()) {
-            log.error
-                << "Error in adding endpoint to "
-                << "an application. Reason: Endpoint "
-                << "already exists: "
-                << endpoint
-                << std::endl;
-            throw std::runtime_error(
-                "Endpoint already exists: " + endpoint
-            );
-        }
-        endpoints_.insert(endpoint);
-        return app_.route(
-                    endpoint,
-                    std::forward<Args>(args)...
-                );
-
-    }
 
     /**
      * @brief State of an application
@@ -83,10 +50,6 @@ class TApplication : public crow::SimpleApp {
      * is run on
      */
     unsigned int port_ = 0;
-    /**
-     * @brief Endpoints of an application
-     */    
-    std::unordered_set<std::string> endpoints_ = {};
     /**
      * @brief Underlying application
      */
