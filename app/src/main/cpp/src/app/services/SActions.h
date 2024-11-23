@@ -5,6 +5,7 @@
 
 #include "../action/action.h"
 #include "../requests/manual.h"
+#include "../../base/logger/logger.h"
 #include "../../base/IService.h"
 #include "../../base/Queue.h"
 
@@ -25,6 +26,10 @@ class SActions : public IService {
         crow::response& response);
     void sendActions(crow::websocket::connection& connection);
     /**
+     * @brief Messages logger
+     */
+    TLogger log;
+    /**
      * @brief Application to receive actions
      */
     NManualRequests::TApplication application;
@@ -35,4 +40,8 @@ class SActions : public IService {
         TQueue<
         std::unique_ptr<
         NAction::TAction>>> queue;
+    /**
+     * @brief Manager of WebSocket APIs
+     */
+    WsManager manager;
 };

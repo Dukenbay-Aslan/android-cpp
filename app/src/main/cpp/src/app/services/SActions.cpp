@@ -5,12 +5,14 @@
 
 #include "../action/action.h"
 #include "SActions.h"
+#include "../wsmanager/wsmanager.h"
 
 /**
  * @brief Constructor
  * @param port Port to run on
  */
 SActions::SActions(unsigned int port)
+    : log("SActions")
 {
     application(port);
 
@@ -22,11 +24,22 @@ SActions::SActions(unsigned int port)
 
     application.addWsRoute(
         "/ws",
-        [](crow::websocket::connection& connection) {
+        [this](crow::websocket::connection& connection) {
+            manager.store(
             std::thread(
                 &sendActions,
                 std::ref(connection)
-            ).detach();
+                ),
+                connection
+            );
+        },
+        [this](crow::websocket::connection& connection,
+                const std::string& reason,
+                uint16_t code) {
+            log.info <<
+                "(onclose) Connection closed. " <<
+                "Reason: " << reason << std::endl;
+            manager.remove(connection);
         }
     );
 }
