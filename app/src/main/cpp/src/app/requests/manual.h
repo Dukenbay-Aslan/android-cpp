@@ -16,6 +16,19 @@ namespace NManualRequests {
 TLogger log("NManualRequests");
 
 /**
+ * @brief function to apply
+ * when a connection is closed.
+ */
+const auto defaultOnClose =
+    [](crow::websocket::connection&,
+        const std::string& reason,
+        uint16_t) {
+    log.info <<
+        "(onclose) Connection closed. " <<
+        "Reason: " << reason << std::endl;
+};
+
+/**
  * @brief Default function to apply 
  * when a client sends a message to server.
  */
@@ -29,19 +42,6 @@ const auto defaultOnMessage =
         connection.send_text(message);
     }
     return;
-};
-
-/**
- * @brief function to apply
- * when a connection is closed.
- */
-const auto defaultOnClose =
-    [](crow::websocket::connection&,
-        const std::string& reason,
-        uint16_t) {
-    log.info <<
-        "(onclose) Connection closed. " <<
-        "Reason: " << reason << std::endl;
 };
 
 /**
@@ -96,20 +96,20 @@ class TApplication {
         Function&& function);
 
     template<typename OnOpen,
-        typename OnMessage
-            = decltype(NManualRequests::defaultOnMessage),
         typename OnClose
             = decltype(NManualRequests::defaultOnClose),
+        typename OnMessage
+            = decltype(NManualRequests::defaultOnMessage),
         typename OnError
             = decltype(NManualRequests::defaultOnError),
         typename OnAccept
             = decltype(NManualRequests::defaultOnAccept)>
     void addWsRoute(const std::string& endpoint,
         OnOpen&& onOpen,
-        OnMessage&& onMessage
-            = NManualRequests::defaultOnMessage,
         OnClose&& onClose
             = NManualRequests::defaultOnClose,
+        OnMessage&& onMessage
+            = NManualRequests::defaultOnMessage,
         OnError&& onError
             = NManualRequests::defaultOnError,
         OnAccept&& onAccept

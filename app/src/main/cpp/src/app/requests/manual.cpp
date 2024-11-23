@@ -165,38 +165,38 @@ void TApplication::addRoute(const std::string& endpoint,
  * @param endpoint Endpoint of a route.
  * @param onOpen Function to apply
  * when a connection is established.
- * @param onMessage Function to apply
- * when a client sends a message to server.
- * Defaults to logging the client message.
  * @param onClose Function to apply
  * when a connection is closed.
  * Defaults to logging the closing reason.
+ * @param onMessage Function to apply
+ * when a client sends a message to server.
+ * Defaults to logging the client message.
  * @param onError Function to apply
  * when an error occurs in connection.
  * Defaults to logging the error message.
  * @param onAccept Function to apply
  * when a client sends a request.
  * Defaults to `return true`.
- * @warning Already closed connection
- * is passed to `onClose` function.
+ * @warning Closed connection is passed
+ * to `onClose` and `onError` functions.
  */
 template<typename OnOpen,
-    typename OnMessage,
     typename OnClose,
+    typename OnMessage,
     typename OnError,
     typename OnAccept>
 void TApplication::addWsRoute(const std::string& endpoint,
         OnOpen&& onOpen,
-        OnMessage&& onMessage,
         OnClose&& onClose,
+        OnMessage&& onMessage,
         OnError&& onError,
         OnAccept&& onAccept) {
     app_
         .route_dynamic(endpoint)
         .websocket()
         .onopen(std::forward<OnOpen>(onOpen))
-        .onmessage(std::forward<OnMessage>(onMessage))
         .onclose(std::forward<OnClose>(onClose))
+        .onmessage(std::forward<OnMessage>(onMessage))
         .onerror(std::forward<OnError>(onError))
         .onaccept(std::forward<OnAccept>(onAccept));
 }
