@@ -1,3 +1,4 @@
+#include <utility>
 #include <mutex>
 #include <condition_variable>
 #include <unordered_map>
@@ -134,6 +135,70 @@ void TApplication::stop() {
     state_ = EAppState::STOP;
     size--;
     app_.stop();
+}
+
+/**
+ * @brief Add a route to receive requests
+ * @tparam Function Functional type
+ * @param endpoint Endpoint of a route
+ * @param method HTTP method
+ * @param function Function to apply on requests
+ */
+template<typename Function>
+void TApplication::addRoute(const std::string& endpoint,
+        crow::HTTPMethod method,
+        Function&& function) {
+    app_
+        .route_dynamic(endpoint)
+        .methods(method)
+        (std::forward<Function>(function));
+}
+
+/**
+ * @brief Add a WebSocket route
+ * to establish a connection.
+ * @tparam OnOpen Callable type.
+ * @tparam OnMessage Callable type.
+ * @tparam OnClose Callable type.
+ * @tparam OnError Callable type.
+ * @tparam OnAccept Callable type.
+ * @param endpoint Endpoint of a route.
+ * @param onOpen Function to apply
+ * when a connection is established.
+ * @param onMessage Function to apply
+ * when a client sends a message to server.
+ * Defaults to logging the client message.
+ * @param onClose Function to apply
+ * when a connection is closed.
+ * Defaults to logging the closing reason.
+ * @param onError Function to apply
+ * when an error occurs in connection.
+ * Defaults to logging the error message.
+ * @param onAccept Function to apply
+ * when a client sends a request.
+ * Defaults to `return true`.
+ * @warning Already closed connection
+ * is passed to `onClose` function.
+ */
+template<typename OnOpen,
+    typename OnMessage,
+    typename OnClose,
+    typename OnError,
+    typename OnAccept>
+void TApplication::addWsRoute(const std::string& endpoint,
+        OnOpen&& onOpen,
+        OnMessage&& onMessage,
+        OnClose&& onClose,
+        OnError&& onError,
+        OnAccept&& onAccept) {
+    app_
+        .route_dynamic(endpoint)
+        .websocket()
+        .onopen(std::forward<OnOpen>(onOpen))
+        .onmessage(std::forward<OnMessage>(onMessage))
+        .onclose(std::forward<OnClose>(onClose))
+        .onerror(std::forward<OnError>(onError))
+        .onaccept(std::forward<OnAccept>(onAccept));
 }
 
 /**

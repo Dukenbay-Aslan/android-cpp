@@ -1,17 +1,71 @@
 #pragma once
 
-#include <stdexcept>
-#include <functional>
 #include <string>
-#include <string_view>
-#include <vector>
-#include <unordered_set>
 #include <crow.h>
+
+#include "../../base/logger/logger.h"
 
 /**
  * @brief Receive manual requests from a client
  */
 namespace NManualRequests {
+
+/**
+ * @brief Messages logger
+ */
+TLogger log("NManualRequests");
+
+/**
+ * @brief Default function to apply 
+ * when a client sends a message to server.
+ */
+const auto defaultOnMessage =
+    [](crow::websocket::connection& connection,
+        const std::string& message,
+        bool isBinary) {
+    if (isBinary) {
+        connection.send_binary(message);
+    } else {
+        connection.send_text(message);
+    }
+    return;
+};
+
+/**
+ * @brief function to apply
+ * when a connection is closed.
+ */
+const auto defaultOnClose =
+    [](crow::websocket::connection&,
+        const std::string& reason,
+        uint16_t) {
+    log.info <<
+        "(onclose) Connection closed. " <<
+        "Reason: " << reason << std::endl;
+};
+
+/**
+ * @brief function to apply
+ * when an error occurs in connection.
+ */
+const auto defaultOnError =
+    [](crow::websocket::connection&,
+        const std::string& error) {
+    log.error <<
+        "(onerror) Connection error: " <<
+        error << std::endl;
+    return;
+};
+
+/**
+ * @brief function to apply
+ * when a client sends a request.
+ */
+const auto defaultOnAccept =
+    [](const crow::request&,
+        void**) {
+    return true;
+};
 
 /**
  * @brief State of an application
@@ -35,6 +89,31 @@ class TApplication {
 
     void run();
     void stop();
+
+    template<typename Function>
+    void addRoute(const std::string& endpoint,
+        crow::HTTPMethod method,
+        Function&& function);
+
+    template<typename OnOpen,
+        typename OnMessage
+            = decltype(NManualRequests::defaultOnMessage),
+        typename OnClose
+            = decltype(NManualRequests::defaultOnClose),
+        typename OnError
+            = decltype(NManualRequests::defaultOnError),
+        typename OnAccept
+            = decltype(NManualRequests::defaultOnAccept)>
+    void addWsRoute(const std::string& endpoint,
+        OnOpen&& onOpen,
+        OnMessage&& onMessage
+            = NManualRequests::defaultOnMessage,
+        OnClose&& onClose
+            = NManualRequests::defaultOnClose,
+        OnError&& onError
+            = NManualRequests::defaultOnError,
+        OnAccept&& onAccept
+            = NManualRequests::defaultOnAccept);
 
     // Member getters
     const EAppState& state() const;
