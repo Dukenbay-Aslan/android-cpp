@@ -4,14 +4,8 @@
 
 #include "manual.h"
 #include "../../base/config/Config.h"
-#include "../../base/logger/logger.h"
 
 namespace NManualRequests {
-
-/**
- * @brief Messages logger
- */
-TLogger log("NManualRequests");
 
 /**
  * @brief Number of applications
