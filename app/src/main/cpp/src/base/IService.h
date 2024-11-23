@@ -4,6 +4,6 @@ class IService {
   public:
     virtual void run() = 0;
     virtual void shutdown() = 0;
-  private:
+  protected:
     bool shutdownFlag = false;
 };
