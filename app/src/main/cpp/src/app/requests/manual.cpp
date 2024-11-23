@@ -67,10 +67,10 @@ TApplication::TApplication(unsigned int port)
 /**
  * @brief Set the port to run an application on
  * @param port Port to run on
- * @return `TApplication::state_ != UNKNOWN_APP_STATE`
+ * @return `TApplication::state_ == UNKNOWN_APP_STATE`
  */
 bool TApplication::operator()(unsigned int port) {
-    if (state_ != EAppState::UNKNOWN_APP_STATE) {
+    if (state_ == EAppState::UNKNOWN_APP_STATE) {
         /* This method clears all default signal handlers
         of a crow::SimpleApp. When the SIGINT (^C) is hit
         at runtime that signal will be sent to
