@@ -26,9 +26,9 @@ SActions::SActions(unsigned int port)
         "/ws",
         [this](crow::websocket::connection& connection) {
             manager.store(
-            std::thread(
-                &sendActions,
-                std::ref(connection)
+                std::thread(
+                    &sendActions,
+                    std::ref(connection)
                 ),
                 connection
             );
@@ -97,5 +97,8 @@ void SActions::sendActions(crow::websocket::connection& connection) {
  * @brief Stop receiving actions
  */
 void SActions::shutdown() {
+    shutdownFlag = true;
+    queue->push(nullptr);
+    manager.removeAll();
     application.stop();
 }
