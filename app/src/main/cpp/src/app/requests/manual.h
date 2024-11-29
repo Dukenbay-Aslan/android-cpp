@@ -1,5 +1,7 @@
 #pragma once
 
+#include <filesystem>
+#include <tuple>
 #include <string>
 #include <crow.h>
 
@@ -114,6 +116,11 @@ class TApplication {
             = NManualRequests::defaultOnError,
         OnAccept&& onAccept
             = NManualRequests::defaultOnAccept);
+    
+    void addCertificate(const std::filesystem::path& crt,
+        const std::filesystem::path& key);
+    void addCertificate(const std::pair<std::filesystem::path,
+        std::filesystem::path>& certificate);
 
     // Member getters
     const EAppState& state() const;

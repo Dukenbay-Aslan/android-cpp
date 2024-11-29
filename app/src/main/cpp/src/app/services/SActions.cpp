@@ -6,6 +6,7 @@
 #include "../action/action.h"
 #include "SActions.h"
 #include "../wsmanager/wsmanager.h"
+#include "../../base/config/Config.h"
 
 /**
  * @brief Constructor
@@ -48,6 +49,9 @@ SActions::SActions(unsigned int port)
  * @brief Start receiving actions
  */
 void SActions::run() {
+    application.addCertificate(
+        Config::certificate()
+    );
     application.run();
 }
 

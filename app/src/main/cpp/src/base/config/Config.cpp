@@ -1,3 +1,4 @@
+#include <utility>
 #include <fstream>
 
 #include "Config.h"
@@ -22,6 +23,12 @@ const std::string KEY_IP_HOST = "ip_host";
  * to run the service `SActions` on
  */
 const std::string KEY_PORT_SACTIONS = "port_sactions";
+/**
+ * @brief JSON key for the paths to
+ * self-signed certificate
+ * and its key
+ */
+const std::string KEY_PATHS_CERTIFICATE = "certificate";
 /**
  * @brief JSON key for a general
  * logging level
@@ -50,6 +57,13 @@ std::string ipHost_ = "";
  * `SActions` on
  */
 unsigned int portSActions_ = -1;
+/**
+ * @brief Paths to
+ * self-signed certificate
+ * and its key
+ */
+std::pair<std::filesystem::path,
+    std::filesystem::path> certificate_;
 /**
  * @brief General logging level
  */
@@ -82,7 +96,8 @@ bool parse(const std::filesystem::path& path) {
     json_ = nlohmann::json::parse(content);
 
     if (json_.contains(Config::constants::KEY_IP_HOST)) {
-        ipHost_ = json_[Config::constants::KEY_IP_HOST].get<std::string>();
+        ipHost_ = json_[Config::constants::KEY_IP_HOST]
+            .get<std::string>();
         if (!valid::ip(ipHost_)) {
             ipHost_ = "";
             return false;
@@ -93,8 +108,11 @@ bool parse(const std::filesystem::path& path) {
             "Reason: Can not find ip_host key\n";
         return false;
     }
-    if (json_.contains(Config::constants::KEY_PORT_SACTIONS)) {
-        portSActions_ = json_[Config::constants::KEY_PORT_SACTIONS].get<unsigned int>();
+    if (json_.contains(
+            Config::constants::KEY_PORT_SACTIONS
+        )) {
+        portSActions_ = json_[Config::constants::KEY_PORT_SACTIONS]
+            .get<unsigned int>();
         if (!valid::port(portSActions_)) {
             portSActions_ = -1;
             return false;
@@ -104,10 +122,23 @@ bool parse(const std::filesystem::path& path) {
     }
 
     if (json_.contains(Config::constants::KEY_LOG_LEVEL)) {
-        auto logLevelStr = json_[Config::constants::KEY_LOG_LEVEL].get<std::string>();
+        auto logLevelStr = json_[Config::constants::KEY_LOG_LEVEL]
+            .get<std::string>();
         logLevel_ = mappers::fromString::logLevel(logLevelStr);
     } else {
         logLevel_ = ELogLevel::DEBUG;
+    }
+
+    if (json_.contains(Config::constants::KEY_PATHS_CERTIFICATE)) {
+        certificate_ = json_[Config::constants::KEY_PATHS_CERTIFICATE]
+            .get<std::pair<
+                std::filesystem::path,
+                std::filesystem::path>>();
+    } else {
+        certificate_ = std::make_pair(
+            "../../certificates/crt.crt",
+            "../../certificates/key.key"
+        );
     }
     return true;
 }
@@ -136,6 +167,16 @@ std::string ipHost() {
  */
 unsigned int portSActions() {
     return portSActions_;
+}
+
+/**
+ * @brief Get the paths to
+ * self-signed certificate
+ * and its key
+ */
+std::pair<std::filesystem::path,
+    std::filesystem::path> certificate() {
+    return certificate_;
 }
 
 /**

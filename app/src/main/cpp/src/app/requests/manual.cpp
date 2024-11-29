@@ -202,6 +202,25 @@ void TApplication::addWsRoute(const std::string& endpoint,
 }
 
 /**
+ * @brief Enable SSL for an application
+ * @param crt Path to `.crt` file
+ * @param key Path to `.key` file
+ */
+void TApplication::addCertificate(const std::filesystem::path& crt,
+        const std::filesystem::path& key) {
+    app_.ssl_file(crt, key);
+}
+
+/**
+ * @brief Enable SSL for an application
+ * @param certificate Paths to `.crt` and `.key` files
+ */
+void TApplication::addCertificate(const std::pair<std::filesystem::path,
+        std::filesystem::path>& certificate) {
+    app_.ssl_file(certificate.first, certificate.second);
+}
+
+/**
  * @brief Get the state of an application
  * @return `RUN`, `STOP` or `UNKNOWN_APP_STATE`
  */
