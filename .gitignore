@@ -1,8 +1,8 @@
 # Temporary files, sandbox/playground
 tmp/
 
-# Building directories
-build/
+# Building files/directories
+**build**
 
 # Private files/directories
 certificates/
