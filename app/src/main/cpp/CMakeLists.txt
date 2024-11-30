@@ -63,6 +63,15 @@ set(SOURCE_FILES
 
 # Building C++ code as a shared library: libandroidcpp.so
 if(EXECUTABLE)
+    add_executable(${CMAKE_PROJECT_NAME}
+        ${SOURCE_FILES})
+    target_link_libraries(${CMAKE_PROJECT_NAME}
+        PRIVATE Boost::boost
+        PRIVATE OpenSSL::SSL
+        PRIVATE OpenSSL::Crypto
+        PRIVATE cpr::cpr
+        PRIVATE nlohmann_json::nlohmann_json)
+else()
     add_library(${CMAKE_PROJECT_NAME} SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
         ${SOURCE_FILES}
@@ -97,13 +106,4 @@ if(EXECUTABLE)
     message(STATUS "Boost Libraries: ${Boost_LIBRARIES}")
     message(STATUS "Android NDK: ${ANDROID_NDK_HOME}")
     message(STATUS "CMake Toolchain: ${CMAKE_TOOLCHAIN_FILE}")
-else()
-    add_executable(${CMAKE_PROJECT_NAME}
-        ${SOURCE_FILES})
-    target_link_libraries(${CMAKE_PROJECT_NAME}
-        PRIVATE Boost::boost
-        PRIVATE OpenSSL::SSL
-        PRIVATE OpenSSL::Crypto
-        PRIVATE cpr::cpr
-        PRIVATE nlohmann_json::nlohmann_json)
 endif()
