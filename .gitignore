@@ -4,6 +4,9 @@ tmp/
 # Building directories
 build/
 
+# Private files/directories
+certificates/
+
 # Visual Studio Code
 .vscode/
 

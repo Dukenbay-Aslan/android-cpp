@@ -30,6 +30,16 @@ const std::string KEY_PORT_SACTIONS = "port_sactions";
  */
 const std::string KEY_PATHS_CERTIFICATE = "certificate";
 /**
+ * @brief Path to `.crt` file
+ */
+const std::filesystem::path CERTIFICATE_CRT_FILE_PATH
+    = "../../certificates/crt.crt";
+/**
+ * @brief Path to `.key` file
+ */
+const std::filesystem::path CERTIFICATE_KEY_FILE_PATH
+    = "../../certificates/key.key";
+/**
  * @brief JSON key for a general
  * logging level
  */
@@ -136,8 +146,8 @@ bool parse(const std::filesystem::path& path) {
                 std::filesystem::path>>();
     } else {
         certificate_ = std::make_pair(
-            "../../certificates/crt.crt",
-            "../../certificates/key.key"
+            Config::constants::CERTIFICATE_CRT_FILE_PATH,
+            Config::constants::CERTIFICATE_KEY_FILE_PATH
         );
     }
     return true;
