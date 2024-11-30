@@ -3,13 +3,49 @@
 # For more examples on how to use CMake, see https://github.com/android/ndk-samples.
 
 # Sets the minimum CMake version required for this project.
-cmake_minimum_required(VERSION 3.22.1)
+cmake_minimum_required(VERSION 3.16.3)
 
 # Declares the project name. The project name can be accessed via ${ PROJECT_NAME},
 # Since this is the top level CMakeLists.txt, the project name is also accessible
 # with ${CMAKE_PROJECT_NAME} (both CMake variables are in-sync within the top level
 # build script scope).
-project("android_cpp")
+project("android_cpp" VERSION 1.0 LANGUAGES CXX)
+
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Include external libraries
+find_package(Boost REQUIRED)
+find_package(OpenSSL REQUIRED)
+find_package(nlohmann_json REQUIRED)
+find_package(cpr REQUIRED)
+
+# Option to build the project as a shared library (default)
+# or as an executable to run and test the C++ part only.
+option(EXECUTABLE "Build as an executable instead of a shared library" OFF)
+
+if(NOT EXECUTABLE)
+    # JNI configuration
+    set(JAVA_HOME "/usr/lib/jvm/java-11-openjdk-amd64")
+    include_directories(${JAVA_HOME}/include)
+    include_directories(${JAVA_HOME}/include/linux)
+    set(JVM_LIBRARY ${JAVA_HOME}/lib/server/libjvm.so)
+endif()
+
+# C++ source files
+set(SOURCE_FILES
+    src/app/action/action.cpp
+    src/app/requests/manual.cpp
+    src/app/services/SActions.cpp
+    src/app/wsmanager/wsmanager.cpp
+    src/base/config/Config.cpp
+    src/base/helpers/mappers.cpp
+    src/base/helpers/utils.cpp
+    src/base/helpers/valid.cpp
+    src/base/logger/logger.cpp
+    src/Main.cpp)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -24,14 +60,50 @@ project("android_cpp")
 # System.loadLibrary() and pass the name of the library defined here;
 # for GameActivity/NativeActivity derived applications, the same library name must be
 # used in the AndroidManifest.xml file.
-add_library(${CMAKE_PROJECT_NAME} SHARED
-        # List C/C++ source files with relative paths to this CMakeLists.txt.
-        native-lib.cpp)
 
-# Specifies libraries CMake should link to your target library. You
-# can link libraries from various origins, such as libraries defined in this
-# build script, prebuilt third-party libraries, or Android system libraries.
-target_link_libraries(${CMAKE_PROJECT_NAME}
+# Building C++ code as a shared library: libandroidcpp.so
+if(EXECUTABLE)
+    add_library(${CMAKE_PROJECT_NAME} SHARED
+        # List C/C++ source files with relative paths to this CMakeLists.txt.
+        ${SOURCE_FILES}
+        native-lib.cpp)
+    # Specifies libraries CMake should link to your target library. You
+    # can link libraries from various origins, such as libraries defined in this
+    # build script, prebuilt third-party libraries, or Android system libraries.
+    target_link_libraries(${CMAKE_PROJECT_NAME}
         # List libraries link to the target library
         android
-        log)
+        log
+        PRIVATE
+        Boost::boost
+        OpenSSL::SSL
+        OpenSSL::Crypto
+        cpr::cpr
+        nlohmann_json::nlohmann_json
+        ${JVM_LIBRARY})
+    # Set Android NDK Configuration
+    set(CMAKE_TOOLCHAIN_FILE ${CMAKE_TOOLCHAIN_FILE} CACHE STRING "Android NDK Toolchain")
+    set(CMAKE_SYSTEM_NAME Android)  # Cross-compilation for Android
+    set(CMAKE_ANDROID_ARCH_ABI arm64-v8a)  # Set your architecture (e.g., arm64-v8a, armeabi-v7a)
+    set(CMAKE_ANDROID_NDK ${ANDROID_NDK_HOME})  # Android NDK location
+    set(CMAKE_ANDROID_STL_TYPE c++_shared)  # Use shared STL
+    # Installation Setup
+    install(TARGETS myandroidcpp
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION bin
+    )
+    message(STATUS "JNI Library Path: ${JVM_LIBRARY}")
+    message(STATUS "Boost Libraries: ${Boost_LIBRARIES}")
+    message(STATUS "Android NDK: ${ANDROID_NDK_HOME}")
+    message(STATUS "CMake Toolchain: ${CMAKE_TOOLCHAIN_FILE}")
+else()
+    add_executable(${CMAKE_PROJECT_NAME}
+        ${SOURCE_FILES})
+    target_link_libraries(${CMAKE_PROJECT_NAME}
+        PRIVATE Boost::boost
+        PRIVATE OpenSSL::SSL
+        PRIVATE OpenSSL::Crypto
+        PRIVATE cpr::cpr
+        PRIVATE nlohmann_json::nlohmann_json)
+endif()
