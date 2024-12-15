@@ -29,10 +29,10 @@ bool ip(std::string_view string) {
 /**
  * @brief Check whether a number is valid port
  * @param number Number to check
- * @return `1024 <= number <= 65535`
+ * @return `49152 <= number <= 65535`
  */
 bool port(unsigned int number) {
-    return (number >= 1024 and number <= 65535);
+    return (number >= 49152 and number <= 65535);
 }
 
 /**
