@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 
+#include "../helpers/utils.h"
 #include "../Structs.h"
 
 class TLogger {
@@ -33,9 +34,34 @@ class TLogger {
             ELogLevel level,
             std::atomic<ELogLevel>& currentLevel,
             std::mutex& mutex);
+        
+        /**
+         * @brief Log a message
+         * @tparam T Data type of a message
+         * @param message Message to log
+         * @return Concatenated logs
+         */
         template<typename T>
-        logger& operator<<(const T& message);
-        logger& operator<<(std::ostream& (*manip)(std::ostream&));
+        logger& operator<<(const T& message) {
+            if (level_ <= currentLevel_.load()) {
+                std::lock_guard<std::mutex> lock(parentMutex);
+                std::cout << utils::now() << prefix_ << message;
+            }
+            return (*this);
+        }
+
+        /**
+         * @brief Concatenate a manipulator to log
+         * @param manip Manipulator to concatenate
+         * @return Concatenated logs
+         */
+        logger& operator<<(std::ostream& (*manip)(std::ostream&)) {
+            if (level_ <= currentLevel_.load()) {
+                std::lock_guard<std::mutex> lock(parentMutex);
+                std::cout << manip;
+            }
+            return (*this);
+        }
       private:
         /**
          * @brief Prefix of log on this level
