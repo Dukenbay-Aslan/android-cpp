@@ -15,7 +15,7 @@ namespace NManualRequests {
 /**
  * @brief Messages logger
  */
-TLogger log("NManualRequests");
+inline TLogger log("NManualRequests");
 
 /**
  * @brief function to apply
