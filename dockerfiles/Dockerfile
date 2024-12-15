@@ -37,8 +37,8 @@ RUN \
 # GCC 9: GNU Compiler Collection with C++ 17 support.
     gcc-9 \
     g++-9 \
-# Boost: Peer-reviewed portable C++ source libraries.
-    libboost-all-dev \
+# Asio: cross-platform C++ library for asynchronous network and low-level I/O
+    libasio-dev \
 # nlohmann/json: JSON for Modern C++.
     nlohmann-json3-dev \
 # Clean up unnecessary files after package installation.
@@ -70,7 +70,7 @@ RUN \
 &&  cd Crow \
 &&  mkdir build \
 &&  cd build \
-&&  cmake .. -DCROW_USE_BOOST=ON -DCROW_BUILD_EXAMPLES=OFF -DCROW_BUILD_TESTS=OFF -DCROW_ENABLE_SSL=ON \
+&&  cmake -DCROW_BUILD_EXAMPLES=OFF -DCROW_BUILD_TESTS=OFF -DCROW_ENABLE_SSL=ON .. \
 &&  make install \
 &&  cd /tmp \
 &&  rm -rf Crow \

@@ -17,7 +17,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Include external libraries
-find_package(Boost REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(cpr REQUIRED)
@@ -66,7 +65,6 @@ if(EXECUTABLE)
     add_executable(${CMAKE_PROJECT_NAME}
         ${SOURCE_FILES})
     target_link_libraries(${CMAKE_PROJECT_NAME}
-        PRIVATE Boost::boost
         PRIVATE OpenSSL::SSL
         PRIVATE OpenSSL::Crypto
         PRIVATE cpr::cpr
@@ -83,13 +81,11 @@ else()
         # List libraries link to the target library
         android
         log
-        PRIVATE
-        Boost::boost
-        OpenSSL::SSL
-        OpenSSL::Crypto
-        cpr::cpr
-        nlohmann_json::nlohmann_json
-        ${JVM_LIBRARY})
+        PRIVATE OpenSSL::SSL
+        PRIVATE OpenSSL::Crypto
+        PRIVATE cpr::cpr
+        PRIVATE nlohmann_json::nlohmann_json
+        PRIVATE ${JVM_LIBRARY})
     # Set Android NDK Configuration
     set(CMAKE_TOOLCHAIN_FILE ${CMAKE_TOOLCHAIN_FILE} CACHE STRING "Android NDK Toolchain")
     set(CMAKE_SYSTEM_NAME Android)  # Cross-compilation for Android
