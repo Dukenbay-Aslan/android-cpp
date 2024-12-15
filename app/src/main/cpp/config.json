@@ -1,0 +1,5 @@
+{
+    "ip_host": "192.168.1.103",
+    "port_sactions": 50000,
+    "log_level": "DEBUG"
+}
