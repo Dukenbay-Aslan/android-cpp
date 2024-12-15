@@ -102,6 +102,10 @@ class TApplication {
     const unsigned int& port() const;
 
     /**
+     * @brief Underlying application
+     */
+    crow::SimpleApp app_;
+    /**
      * @brief State of an application
      */
     EAppState state_ = EAppState::UNKNOWN_APP_STATE;
@@ -111,10 +115,6 @@ class TApplication {
      * is run on
      */
     unsigned int port_ = 0;
-    /**
-     * @brief Underlying application
-     */
-    crow::SimpleApp app_;
 };
 
 } // namespace NManualRequests
