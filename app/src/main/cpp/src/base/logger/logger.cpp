@@ -1,5 +1,6 @@
-#include "../helpers/utils.h"
 #include "logger.h"
+
+std::atomic<ELogLevel> TLogger::level_{ELogLevel::DEBUG};
 
 /**
  * @brief Constructor. Also construct
@@ -25,7 +26,7 @@ TLogger::TLogger(const std::string& serviceName)
         level_,
         mutex)
 {
-    level_.store(ELogLevel::DEBUG);
+
 }
 
 /**
@@ -61,32 +62,4 @@ TLogger::logger::logger(const std::string& prefix,
     , parentMutex(mutex)
 {
 
-}
-
-/**
- * @brief Log a message
- * @tparam T Data type of a message
- * @param message Message to log
- * @return Concatenated logs
- */
-template<typename T>
-TLogger::logger& TLogger::logger::operator<<(const T& message) {
-    if (level_ <= currentLevel_.load()) {
-        std::lock_guard<std::mutex> lock(parentMutex);
-        std::cout << utils::now() << prefix_ << message;
-    }
-    return (*this);
-}
-
-/**
- * @brief Concatenate a manipulator to log
- * @param manip Manipulator to concatenate
- * @return Concatenated logs
- */
-TLogger::logger& TLogger::logger::operator<<(std::ostream& (*manip)(std::ostream&)) {
-    if (level_ <= currentLevel_.load()) {
-        std::lock_guard<std::mutex> lock(parentMutex);
-        std::cout << manip;
-    }
-    return (*this);
 }
