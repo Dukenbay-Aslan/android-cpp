@@ -14,6 +14,8 @@ RUN \
 &&  apt upgrade -y \
 # Installing following packages:
 &&  apt install -y --no-install-recommends \
+# ca-certificates: deb package that contains certificates provided by the Certificate Authorities
+    ca-certificates \
 # OpenJDK: The place to collaborate on an open-source implementation of the Java Platform, Standard Edition, and related projects.
     openjdk-11-jdk \
 # cURL: Client-side URL transfer library
@@ -45,7 +47,11 @@ RUN \
 
 # Setting GCC 9 as the default
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 100 \
-&&  update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 100
+&&  update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 100 \
+# Update the list of trusted certificate authorities
+&&  update-ca-certificates \
+# Configure Git to Trust Certificates
+&&  git config --global http.sslCAInfo /etc/ssl/certs/ca-certificates.crt
 
 # Downloading and installing Android NDK.
 # Android NDK: The Native Development Kit that allows C/C++ code usage with Android.
