@@ -12,6 +12,7 @@ template<class TItem>
 class TQueue {
   public:
     void push(const TItem& item);
+    void push(TItem&& item);
     TItem pop();
     const std::size_t& size() const;
     bool empty();
@@ -55,6 +56,24 @@ void TQueue<TItem>::push(const TItem& item) {
 }
 
 /**
+ * @brief Push a move-only item to the queue
+ * @tparam TItem 
+ * @param item Item to push
+ * @warning Blocks until there is space in the queue
+ */
+template<class TItem>
+void TQueue<TItem>::push(TItem&& item) {
+    std::unique_lock<std::mutex> lock(mutex);
+    // Wait until there is a space in the queue
+    conditionVariable.wait(lock, [this] {
+        return (queue.size() < maxSize);
+    });
+    queue.push(std::move(item));
+    lock.unlock();
+    conditionVariable.notify_one();
+}
+
+/**
  * @brief Pop an item 
  * @tparam TItem 
  * @return Item in the front of the queue. First In First Out (FIFO)
@@ -67,11 +86,11 @@ TItem TQueue<TItem>::pop() {
     conditionVariable.wait(lock, [this] {
         return (!queue.empty());
     });
-	TItem item = queue.front();
+	TItem item = std::move(queue.front());
 	queue.pop();
     lock.unlock();
     conditionVariable.notify_one();
-	return item;
+	return std::move(item);
 }
 
 /**
