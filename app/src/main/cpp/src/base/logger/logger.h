@@ -11,7 +11,7 @@ class TLogger {
   public:
     TLogger(const std::string& prefix);
     static void setLevel(ELogLevel level);
-    static const ELogLevel& getLevel();
+    static ELogLevel getLevel();
   private:
     /**
      * @brief General logging level.

@@ -40,7 +40,7 @@ void TLogger::setLevel(ELogLevel level) {
  * @brief Get the current general logging level
  * @return `static TLogger::level_`
  */
-const ELogLevel& TLogger::getLevel() {
+ELogLevel TLogger::getLevel() {
     return level_.load();
 }
 
