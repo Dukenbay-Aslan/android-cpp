@@ -6,6 +6,7 @@
 #include <memory>
 #include <utility>
 #include <thread>
+#include <filesystem>
 #include <vector>
 #include <iostream>
 
@@ -43,15 +44,21 @@ void signalHandler(int sig) {
     shutdownFlag = true;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     /**
      * @brief Messages logger
      */
     TLogger log("Main");
-    log.info
-        << "Parsing config.json"
-        << std::endl;
-    if (!Config::parse("config.json")) {
+    if (argc != 2) {
+        log.error << "Give a path to configuration file";
+        return -1;
+    }
+    std::string configFilePath = argv[1];
+    log.info <<
+        "Parsing " <<
+        configFilePath <<
+        std::endl;
+    if (!Config::parse(std::filesystem::path(configFilePath))) {
         log.error
             << "Error in parsing configurations. "
             << std::endl;
@@ -78,7 +85,7 @@ int main() {
 
     std::vector<std::shared_ptr<IService>> services;
     auto actionsService = std::make_shared<SActions>(
-        8080
+        Config::portSActions()
     );
 
     /**
