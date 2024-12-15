@@ -109,13 +109,17 @@ bool parse(const std::filesystem::path& path) {
         ipHost_ = json_[Config::constants::KEY_IP_HOST]
             .get<std::string>();
         if (!valid::ip(ipHost_)) {
+            log.error <<
+                "Error in parsing configurations. " <<
+                "Reason: Invalid IP address for ip_host." <<
+                "Must be 4 octets from [0-255]";
             ipHost_ = "";
             return false;
         }
     } else {
         log.error << "(parse) " <<
-            "Error in parseing configurations. " <<
-            "Reason: Can not find ip_host key\n";
+            "Error in parsing configurations. " <<
+            "Reason: Can not find ip_host key";
         return false;
     }
     if (json_.contains(
@@ -124,11 +128,15 @@ bool parse(const std::filesystem::path& path) {
         portSActions_ = json_[Config::constants::KEY_PORT_SACTIONS]
             .get<unsigned int>();
         if (!valid::port(portSActions_)) {
+            log.error <<
+                "Error in parsing configurations. " <<
+                "Reason: Invalid port for port_sactions. " <<
+                "Must be from range [49152-65535]";
             portSActions_ = -1;
             return false;
         }
     } else {
-        portSActions_ = 8080;
+        portSActions_ = 50000;
     }
 
     if (json_.contains(Config::constants::KEY_LOG_LEVEL)) {

@@ -66,6 +66,8 @@ SActions::SActions(unsigned int port)
  * @brief Start receiving actions
  */
 void SActions::run() {
+    log.info <<
+        "Service started";
     application.addCertificate(
         Config::certificate()
     );
