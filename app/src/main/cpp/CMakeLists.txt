@@ -21,6 +21,11 @@ find_package(OpenSSL REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(cpr REQUIRED)
 
+# Configure crow to use SSL
+message(STATUS "Configuring crow to use SSL")
+add_definitions(-DCROW_ENABLE_SSL)
+message(STATUS "Configuring crow to use SSL -- done")
+
 # Option to build the project as a shared library (default)
 # or as an executable to run and test the C++ part only.
 option(EXECUTABLE "Build as an executable instead of a shared library" OFF)
