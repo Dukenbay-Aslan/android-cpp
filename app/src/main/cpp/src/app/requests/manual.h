@@ -92,31 +92,6 @@ class TApplication {
     void run();
     void stop();
 
-    template<typename Function>
-    void addRoute(const std::string& endpoint,
-        crow::HTTPMethod method,
-        Function&& function);
-
-    template<typename OnOpen,
-        typename OnClose
-            = decltype(NManualRequests::defaultOnClose),
-        typename OnMessage
-            = decltype(NManualRequests::defaultOnMessage),
-        typename OnError
-            = decltype(NManualRequests::defaultOnError),
-        typename OnAccept
-            = decltype(NManualRequests::defaultOnAccept)>
-    void addWsRoute(const std::string& endpoint,
-        OnOpen&& onOpen,
-        OnClose&& onClose
-            = NManualRequests::defaultOnClose,
-        OnMessage&& onMessage
-            = NManualRequests::defaultOnMessage,
-        OnError&& onError
-            = NManualRequests::defaultOnError,
-        OnAccept&& onAccept
-            = NManualRequests::defaultOnAccept);
-    
     void addCertificate(const std::filesystem::path& crt,
         const std::filesystem::path& key);
     void addCertificate(const std::pair<std::filesystem::path,
