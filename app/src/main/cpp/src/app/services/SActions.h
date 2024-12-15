@@ -5,6 +5,7 @@
 
 #include "../action/action.h"
 #include "../requests/manual.h"
+#include "../wsmanager/wsmanager.h"
 #include "../../base/logger/logger.h"
 #include "../../base/IService.h"
 #include "../../base/Queue.h"
@@ -22,8 +23,6 @@ class SActions : public IService {
     void run() override;
     void shutdown() override;
   private:
-    void process(const crow::request& request,
-        crow::response& response);
     void sendActions(crow::websocket::connection& connection);
     /**
      * @brief Messages logger

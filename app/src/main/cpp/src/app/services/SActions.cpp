@@ -5,7 +5,6 @@
 
 #include "../action/action.h"
 #include "SActions.h"
-#include "../wsmanager/wsmanager.h"
 #include "../../base/config/Config.h"
 
 /**
@@ -20,7 +19,24 @@ SActions::SActions(unsigned int port)
     application.addRoute(
         "/action",
         crow::HTTPMethod::POST,
-        process
+        [this](const crow::request& request,
+                crow::response& response) {
+            NAction::TAction action(std::move(request));
+            if (action.empty()) {
+                response.code = crow::status::BAD_REQUEST;
+                response.body = "Bad JSON";
+                response.end();
+                return;
+            }
+            queue->push(
+                std::make_unique
+                    <NAction::TAction>(action)
+            );
+            response.code = crow::status::OK;
+            response.body = "Received an action";
+            response.end();
+            return;
+        }
     );
 
     application.addWsRoute(
@@ -28,7 +44,8 @@ SActions::SActions(unsigned int port)
         [this](crow::websocket::connection& connection) {
             manager.store(
                 std::thread(
-                    &sendActions,
+                    &SActions::sendActions,
+                    this,
                     std::ref(connection)
                 ),
                 connection
@@ -53,30 +70,6 @@ void SActions::run() {
         Config::certificate()
     );
     application.run();
-}
-
-/**
- * @brief Process requested actions
- * @param request Request to parse to an action
- * @param response Response to fill and send to a client
- */
-void SActions::process(const crow::request& request,
-        crow::response& response) {
-    NAction::TAction action(std::move(request));
-    if (action.empty()) {
-        response.code = crow::status::BAD_REQUEST;
-        response.body = "Bad JSON";
-        response.end();
-        return;
-    }
-    queue->push(
-        std::make_unique
-            <NAction::TAction>(action)
-    );
-    response.code = crow::status::OK;
-    response.body = "Received an action";
-    response.end();
-    return;
 }
 
 /**
