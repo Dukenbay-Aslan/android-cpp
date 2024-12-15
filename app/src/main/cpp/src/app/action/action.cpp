@@ -128,6 +128,7 @@ std::ostream& operator<<(std::ostream& os,
         mappers::toString::entity(action.entity()) << '\n' <<
     "Role of an actor: " <<
         mappers::toString::role(action.role()) << '\n';
+    return os;
 }
 
 } // namespace NAction
