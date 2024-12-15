@@ -17,6 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Include external libraries
+find_package(Threads REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(cpr REQUIRED)
@@ -70,6 +71,7 @@ if(EXECUTABLE)
     add_executable(${CMAKE_PROJECT_NAME}
         ${SOURCE_FILES})
     target_link_libraries(${CMAKE_PROJECT_NAME}
+        PRIVATE Threads::Threads
         PRIVATE OpenSSL::SSL
         PRIVATE OpenSSL::Crypto
         PRIVATE cpr::cpr
@@ -86,6 +88,7 @@ else()
         # List libraries link to the target library
         android
         log
+        PRIVATE Threads::Threads
         PRIVATE OpenSSL::SSL
         PRIVATE OpenSSL::Crypto
         PRIVATE cpr::cpr
