@@ -45,7 +45,13 @@ class TLogger {
         logger& operator<<(const T& message) {
             if (level_ <= currentLevel_.load()) {
                 std::lock_guard<std::mutex> lock(parentMutex);
-                std::cout << utils::now() << prefix_ << message;
+                std::cout <<
+                    "(" <<
+                    utils::now() <<
+                    ") " <<
+                    prefix_ <<
+                    message <<
+                    std::endl;
             }
             return (*this);
         }
