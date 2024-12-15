@@ -193,7 +193,7 @@ void TApplication::addWsRoute(const std::string& endpoint,
         OnAccept&& onAccept) {
     app_
         .route_dynamic(endpoint)
-        .websocket()
+        .websocket(this)
         .onopen(std::forward<OnOpen>(onOpen))
         .onclose(std::forward<OnClose>(onClose))
         .onmessage(std::forward<OnMessage>(onMessage))
