@@ -15,11 +15,10 @@ SActions::SActions(unsigned int port)
     : log("SActions")
 {
     application(port);
-
-    application.addRoute(
-        "/action",
-        crow::HTTPMethod::POST,
-        [this](const crow::request& request,
+    // Receive HTTP/HTTPS POST requests
+    CROW_ROUTE(application.app_, "/action")
+        .methods(crow::HTTPMethod::Post)
+        ([this](const crow::request& request,
                 crow::response& response) {
             NAction::TAction action(std::move(request));
             if (action.empty()) {
@@ -36,12 +35,11 @@ SActions::SActions(unsigned int port)
             response.body = "Received an action";
             response.end();
             return;
-        }
-    );
+        });
 
-    application.addWsRoute(
-        "/ws",
-        [this](crow::websocket::connection& connection) {
+    // Support WebSocket (Secure) connections
+    CROW_WEBSOCKET_ROUTE(application.app_, "/ws")
+        .onopen([this](crow::websocket::connection& connection) {
             manager.store(
                 std::thread(
                     &SActions::sendActions,
@@ -50,16 +48,18 @@ SActions::SActions(unsigned int port)
                 ),
                 connection
             );
-        },
-        [this](crow::websocket::connection& connection,
+        })
+        .onclose([this](crow::websocket::connection& connection,
                 const std::string& reason,
                 uint16_t code) {
             log.info <<
                 "(onclose) Connection closed. " <<
                 "Reason: " << reason << std::endl;
             manager.remove(connection);
-        }
-    );
+        })
+        .onmessage(NManualRequests::defaultOnMessage)
+        .onerror(NManualRequests::defaultOnError)
+        .onaccept(NManualRequests::defaultOnAccept);
 }
 
 /**
