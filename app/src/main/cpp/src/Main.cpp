@@ -105,7 +105,9 @@ int main() {
         shutdownCv.wait_for(
             lock,
             oneDay,
-            shutdownFlag.load()
+            [&]() {
+                return shutdownFlag.load();
+            }
         );
         lock.unlock();
         shutdownCv.notify_all();
