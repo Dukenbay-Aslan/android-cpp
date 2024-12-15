@@ -60,6 +60,8 @@ SActions::SActions(unsigned int port)
         .onmessage(NManualRequests::defaultOnMessage)
         .onerror(NManualRequests::defaultOnError)
         .onaccept(NManualRequests::defaultOnAccept);
+    log.info <<
+        "Service initialized";
 }
 
 /**
