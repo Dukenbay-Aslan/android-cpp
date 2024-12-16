@@ -34,7 +34,9 @@ option(DEBUG "Turn on debug instructions" OFF)
 
 # Add debug instructions
 if(DEBUG)
+    message(STATUS "Adding debug instructions")
     set(CMAKE_CXX_FLAGS "-g")
+    message(STATUS "Adding debug instructions -- done")
 endif()
 
 if(NOT EXECUTABLE)
