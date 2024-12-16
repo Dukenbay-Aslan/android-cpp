@@ -41,7 +41,10 @@ std::condition_variable shutdownCv;
  * @param sig Signal received
  */
 void signalHandler(int sig) {
-    log.info <<
+    std::cout <<
+        "(" <<
+        utils::now() <<
+        ") [INFO] " <<
         "(signalHandler) Received signal: " <<
         sig;
     shutdownFlag.store(true);
