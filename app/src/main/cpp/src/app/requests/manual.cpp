@@ -52,11 +52,7 @@ TApplication::TApplication(unsigned int port)
     : state_(EAppState::UNKNOWN_APP_STATE)
     , port_(port)
 {
-    /* This method clears all default signal handlers
-    of a crow::SimpleApp. When the SIGINT (^C) is hit
-    at runtime that signal will be sent to
-    signalHandler function in Main.cpp. */
-    app_.signal_clear();
+
 }
 
 /**
@@ -66,11 +62,6 @@ TApplication::TApplication(unsigned int port)
  */
 bool TApplication::operator()(unsigned int port) {
     if (state_ == EAppState::UNKNOWN_APP_STATE) {
-        /* This method clears all default signal handlers
-        of a crow::SimpleApp. When the SIGINT (^C) is hit
-        at runtime that signal will be sent to
-        signalHandler function in Main.cpp. */
-        app_.signal_clear();
         port_ = port;
         return true;
     }
@@ -107,6 +98,13 @@ void TApplication::run() {
     size++;
     lock.unlock();
     conditionVariable.notify_one();
+    /* This method clears all default signal handlers
+    of a crow::SimpleApp. When the SIGINT (^C) is hit
+    at runtime that signal will be sent to
+    signalHandler function in Main.cpp. */
+    app_.signal_clear();
+    log.debug <<
+        "app_.signal_clear()";
     app_
         .bindaddr(Config::ipHost())
         .multithreaded()
