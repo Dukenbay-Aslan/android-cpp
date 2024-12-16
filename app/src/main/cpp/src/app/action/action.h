@@ -18,15 +18,18 @@ namespace NAction {
 namespace constants {
 
 /**
- * @brief JSON key of an action type
+ * @brief `action_type`. JSON key of an action type.
+ * One of `CREATE`, `UPDATE`, `DELETE`, `VIEW`
  */
 const std::string REQUEST_KEY_ACTION_TYPE = "action_type";
 /**
- * @brief JSON key of an entity to take an action on
+ * @brief `entity`. JSON key of an entity to take an action on.
+ * One of `GROUP`, `ACCOUNT`, `SCHEDULE`, `LESSON`, `MARK`
  */
 const std::string REQUEST_KEY_ENTITY = "entity";
 /**
- * @brief JSON key of a role of an actor
+ * @brief `role`. JSON key of a role of an actor.
+ * One of `ADMIN`, `MANAGER`, `TEACHER`, `STUDENT`
  */
 const std::string REQUEST_KEY_ROLE = "role";
 
