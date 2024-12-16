@@ -4,6 +4,9 @@
 #include <unordered_map>
 #include <crow.h>
 
+#include "../action/action.h"
+#include "../../base/Queue.h"
+
 /**
  * @brief Manage WebSocket APIs
  */
@@ -12,7 +15,11 @@ class WsManager {
     WsManager() = default;
     void store(std::thread&& thread,
         crow::websocket::connection& connection);
-    void remove(crow::websocket::connection& connection);
+    void remove(crow::websocket::connection& connection,
+        std::shared_ptr<
+            TQueue<
+                std::unique_ptr<
+                    NAction::TAction>>>& queue);
     void removeAll();
     const bool& shutdownFlag(crow::websocket::connection& connection);
   private:

@@ -38,10 +38,30 @@ void WsManager::store(std::thread&& thread,
  * Remove their pair from memory
  * @param connection Closed connection
  */
-void WsManager::remove(crow::websocket::connection& connection) {
+void WsManager::remove(crow::websocket::connection& connection,
+        std::shared_ptr<
+            TQueue<
+                std::unique_ptr<
+                    NAction::TAction>>>& queue) {
+    std::cout <<
+        "(WsManager::remove) Removing connection...\n";
+    std::cout <<
+        "(WsManager::remove) Setting shutdownFlag = true\n";
+    shutdownFlags[&connection] = true;
+    std::cout <<
+        "(WsManager::remove) Pushing nullptr to queue\n";
+    queue->push(nullptr);
+    std::cout <<
+        "(WsManager::remove) Taking thread\n";
     auto& thread = connRefsThreads[&connection];
+    std::cout <<
+        "(WsManager::remove) Checking thread joinable\n";
     if (thread.joinable()) {
+        std::cout <<
+            "(WsManager::remove) Joining thread\n";
         thread.join();
+        std::cout <<
+            "(WsManager::remove) Joined thread\n";
     }
 }
 

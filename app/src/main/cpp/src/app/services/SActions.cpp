@@ -68,7 +68,10 @@ SActions::SActions(unsigned int port)
             log.info <<
                 "(onclose) Connection closed. " <<
                 "Reason: " << reason << std::endl;
-            manager.remove(connection);
+            manager.remove(
+                connection,
+                queue
+            );
         })
         .onmessage(NManualRequests::defaultOnMessage)
         .onerror(NManualRequests::defaultOnError)
@@ -95,7 +98,7 @@ void SActions::run() {
  * @param connection Connection with client
  */
 void SActions::sendActions(crow::websocket::connection& connection) {
-    while (!shutdownFlag) {
+    while (!manager.shutdownFlag(connection) and !shutdownFlag) {
         auto action = queue->pop();
         if (action == nullptr) {
             continue;
