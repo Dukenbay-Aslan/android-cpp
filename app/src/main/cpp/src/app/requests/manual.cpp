@@ -93,12 +93,14 @@ void TApplication::run() {
     }
     std::unique_lock<std::mutex> lock(mutex);
     conditionVariable.wait(lock, [this] {
-        log.error <<
-            "(TApplication::run) " <<
-            "Error in running an application. Reason: " <<
-            "Maximum size of running applications " <<
-            "reached. Application on port " << port_ <<
-            " not run. Waiting for any application to stop\n";
+        if (size > maxSize) {
+            log.error <<
+                "(TApplication::run) " <<
+                "Error in running an application. Reason: " <<
+                "Maximum size of running applications " <<
+                "reached. Application on port " << port_ <<
+                " not run. Waiting for any application to stop\n";
+        }
         return (size <= maxSize);
     });
     state_ = EAppState::RUN;

@@ -40,6 +40,9 @@ SActions::SActions(unsigned int port)
     // Support WebSocket (Secure) connections
     CROW_WEBSOCKET_ROUTE(application.app_, "/ws")
         .onopen([this](crow::websocket::connection& connection) {
+            log.info <<
+                "(onopen) New WebSocket connection from " <<
+                connection.get_remote_ip();
             manager.store(
                 std::thread(
                     &SActions::sendActions,

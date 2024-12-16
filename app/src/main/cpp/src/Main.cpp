@@ -46,6 +46,9 @@ TLogger log("Main");
  * @param sig Signal received
  */
 void signalHandler(int sig) {
+    log.info <<
+        "(signalHandler) Received signal: " <<
+        sig;
     shutdownFlag.store(true);
     shutdownCv.notify_one();
 }
