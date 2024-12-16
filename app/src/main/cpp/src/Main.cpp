@@ -36,6 +36,11 @@ std::mutex shutdownMutex;
 std::condition_variable shutdownCv;
 
 /**
+ * @brief Messages logger
+ */
+TLogger log("Main");
+
+/**
  * @brief Catch signals and
  * notify services to shut down
  * @param sig Signal received
@@ -46,10 +51,6 @@ void signalHandler(int sig) {
 }
 
 int main(int argc, char *argv[]) {
-    /**
-     * @brief Messages logger
-     */
-    TLogger log("Main");
     if (argc != 2) {
         log.error << "Give a path to configuration file";
         return -1;
