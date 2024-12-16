@@ -10,6 +10,14 @@
 void WsManager::store(std::thread&& thread,
         crow::websocket::connection& connection) {
     connRefsThreads[&connection] = std::move(thread);
+    std::cout <<
+        "Assigned thread\n";
+    shutdownFlags[&connection] = false;
+    std::cout <<
+        "shutdownFlag = false\n";
+    ipConns[connection.get_remote_ip()] = &connection;
+    std::cout <<
+        "Assigned connection to ip\n";
 }
 
 /**
@@ -35,4 +43,14 @@ void WsManager::removeAll() {
             thread.join();
         }
     }
+}
+
+/**
+ * @brief Get the shutdown flag
+ * of the connection
+ * @param connection WebSocket connection
+ * @return `WsManager::shutdownFlags[&connection]`
+ */
+const bool& WsManager::shutdownFlag(crow::websocket::connection& connection) {
+    return shutdownFlags[&connection];
 }
