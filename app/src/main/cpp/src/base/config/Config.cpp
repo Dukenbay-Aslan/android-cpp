@@ -33,12 +33,12 @@ const std::string KEY_PATHS_CERTIFICATE = "certificate";
  * @brief Path to `.crt` file
  */
 const std::filesystem::path CERTIFICATE_CRT_FILE_PATH
-    = "../../certificates/crt.crt";
+    = "../src/certificates/crt.crt";
 /**
  * @brief Path to `.key` file
  */
 const std::filesystem::path CERTIFICATE_KEY_FILE_PATH
-    = "../../certificates/key.key";
+    = "../src/certificates/key.key";
 /**
  * @brief JSON key for a general
  * logging level
