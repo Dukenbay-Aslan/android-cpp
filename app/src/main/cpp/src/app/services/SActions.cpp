@@ -14,7 +14,12 @@
 SActions::SActions(unsigned int port)
     : log("SActions")
 {
-    application(port);
+    if (!application(port)) {
+        log.error <<
+            "Error in attaching a port to an application." <<
+            "Reason: Application state != UNKNOWN_APP_STATE";
+        return; 
+    }
     // Receive HTTP/HTTPS POST requests
     CROW_ROUTE(application.app_, "/action")
         .methods(crow::HTTPMethod::Post)
