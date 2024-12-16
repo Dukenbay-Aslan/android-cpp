@@ -20,6 +20,11 @@ SActions::SActions(unsigned int port)
             "Reason: Application state != UNKNOWN_APP_STATE";
         return; 
     }
+    // Initialize queue of actions
+    queue = std::make_shared<
+        TQueue<
+            std::unique_ptr<
+                NAction::TAction>>>();
     // Receive HTTP/HTTPS POST requests
     CROW_ROUTE(application.app_, "/action")
         .methods(crow::HTTPMethod::Post)
@@ -106,8 +111,20 @@ void SActions::sendActions(crow::websocket::connection& connection) {
  * @brief Stop receiving actions
  */
 void SActions::shutdown() {
+    log.info <<
+        "Shutting down service...";
     shutdownFlag = true;
+    log.info <<
+        "Set shutdown flag = true";
     queue->push(nullptr);
+    log.info <<
+        "Pushed nullptr into queue";
     manager.removeAll();
+    log.info <<
+        "Removed all websocket connections";
     application.stop();
+    log.info <<
+        "application stopped";
+    log.info <<
+        "Service successfully shut down";
 }
