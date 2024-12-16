@@ -9,6 +9,18 @@
  */
 void WsManager::store(std::thread&& thread,
         crow::websocket::connection& connection) {
+    if (ipConns.count(connection.get_remote_ip())) {
+        std::cout <<
+            "Found existing connection from " <<
+            connection.get_remote_ip() <<
+            std::endl;
+        ipConns[connection.get_remote_ip()]->close();
+        std::cout <<
+            "Closed connection\n";
+        ipConns.erase(connection.get_remote_ip());
+        std::cout <<
+            "Erased connection IP\n";
+    }
     connRefsThreads[&connection] = std::move(thread);
     std::cout <<
         "Assigned thread\n";
