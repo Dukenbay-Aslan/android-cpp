@@ -30,6 +30,12 @@ message(STATUS "Configuring crow to use SSL -- done")
 # Option to build the project as a shared library (default)
 # or as an executable to run and test the C++ part only.
 option(EXECUTABLE "Build as an executable instead of a shared library" OFF)
+option(DEBUG "Turn on debug instructions" OFF)
+
+# Add debug instructions
+if(DEBUG)
+    set(CMAKE_CXX_FLAGS "-g")
+endif()
 
 if(NOT EXECUTABLE)
     # JNI configuration
