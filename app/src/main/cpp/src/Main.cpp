@@ -88,6 +88,7 @@ int main(int argc, char *argv[]) {
     auto actionsService = std::make_shared<SActions>(
         Config::portSActions()
     );
+    services.push_back(actionsService);
 
     /**
      * @brief `run` functions of services
