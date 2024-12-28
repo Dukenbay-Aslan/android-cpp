@@ -10,6 +10,12 @@ certificates/
 # Visual Studio Code
 .vscode/
 
+# Text files
+**.txt
+
+# Shell scripts
+**.sh
+
 # GitHub generated
 *.iml
 .gradle
