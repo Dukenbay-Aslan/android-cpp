@@ -54,23 +54,26 @@ SActions::SActions(unsigned int port)
                 "(onopen) New WebSocket connection from " <<
                 connection.get_remote_ip();
             manager.store(
+                connection.get_remote_ip(),
+                connection,
                 std::thread(
                     &SActions::sendActions,
                     this,
                     std::ref(connection)
                 ),
-                connection
+                shutdownFlag,
+                queue
             );
         })
         .onclose([this](crow::websocket::connection& connection,
                 const std::string& reason,
                 uint16_t code) {
-            log.info <<
-                "(onclose) Connection closed. " <<
-                "Reason: " << reason << std::endl;
+            log.info
+                << "(onclose) Connection closed. "
+                << "Reason: " << reason
+                << "Code: " << code;
             manager.remove(
-                connection,
-                queue
+                connection
             );
         })
         .onmessage(NManualRequests::defaultOnMessage)
@@ -119,9 +122,6 @@ void SActions::shutdown() {
     shutdownFlag = true;
     log.info <<
         "Set shutdown flag = true";
-    queue->push(nullptr);
-    log.info <<
-        "Pushed nullptr into queue";
     manager.removeAll();
     log.info <<
         "Removed all websocket connections";

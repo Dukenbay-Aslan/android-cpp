@@ -42,5 +42,5 @@ class SActions : public IService {
     /**
      * @brief Manager of WebSocket APIs
      */
-    WsManager manager;
+    Ws::Manager manager;
 };
