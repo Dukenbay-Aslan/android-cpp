@@ -1,5 +1,125 @@
 #include "wsmanager.h"
 
+namespace Ws {
+
+/**
+ * @brief Default constructor
+ */
+Connection::Connection()
+    : ip_()
+    , conn_()
+    , thread_()
+    , shutdownFlag_()
+    , queue_()
+{
+
+}
+
+/**
+ * @brief Constructor
+ * @param ip IP address of the issuer
+ * @param conn WebSocket connection
+ * @param thread Worker thread
+ * @param shutdownFlag Shut down trigger
+ * @param queue Queue for worker thread
+ */
+Connection::Connection(const std::string& ip,
+        crow::websocket::connection& conn,
+        std::thread&& thread,
+        bool& shutdownFlag,
+        std::shared_ptr<
+            TQueue<
+            std::unique_ptr<
+            NAction::TAction>>> queue)
+    : ip_(ip)
+    , conn_(&conn)
+    , thread_(std::move(thread))
+    , shutdownFlag_(&shutdownFlag)
+    , queue_(queue)
+{
+
+}
+
+/**
+ * @brief Assigning operator with moving
+ * @param other Connection to assign
+ * @return Moved connection
+ */
+Connection& Connection::operator=(Connection&& other) {
+    log.debug
+        << "(Connection::operator=) this->ip_ = std::move(other.ip_);";
+    this->ip_ = std::move(other.ip_);
+    log.debug
+        << "(Connection::operator=) this->ip_ = std::move(other.ip_); -- done";
+    log.debug
+        << "(Connection::operator=) this->conn_ = std::move(other.conn_);";
+    this->conn_ = std::move(other.conn_);
+    log.debug
+        << "(Connection::operator=) this->conn_ = std::move(other.conn_); -- done";
+    log.debug
+        << "(Connection::operator=) this->queue_ = std::move(other.queue_);";
+    this->queue_ = std::move(other.queue_);
+    log.debug
+        << "(Connection::operator=) this->queue_ = std::move(other.queue_); -- done";
+    log.debug
+        << "(Connection::operator=) this->thread_ = std::move(other.thread_);";
+    this->thread_ = std::move(other.thread_);
+    log.debug
+        << "(Connection::operator=) this->thread_ = std::move(other.thread_); -- done";
+    log.debug
+        << "(Connection::operator=) this->shutdownFlag_ = std::move(other.shutdownFlag_);";
+    this->shutdownFlag_ = std::move(other.shutdownFlag_);
+    log.debug
+        << "(Connection::operator=) this->shutdownFlag_ = std::move(other.shutdownFlag_); -- done";
+    return *this;
+}
+
+/**
+ * @brief If the worker thread
+ * is joinable:
+ * - Set `shutdownFlag_ = true`
+ * - Push `nullptr` to `queue_`
+ * - Join the `thread_`
+ * - Close the `conn_`
+ */
+void Connection::close() {
+    log.debug
+        << "(Connection::close) if (thread_.joinable()) {";
+    if (thread_.joinable()) {
+        log.debug
+            << "(Connection::close) *shutdownFlag_ = true;";
+        *shutdownFlag_ = true;
+        log.debug
+            << "(Connection::close) *shutdownFlag_ = true; -- done";
+        log.debug
+            << "(Connection::close) queue_->push(nullptr);";
+        queue_->push(nullptr);
+        log.debug
+            << "(Connection::close) queue_->push(nullptr); -- done";
+        log.debug
+            << "(Connection::close) thread_.join();";
+        thread_.join();
+        log.debug
+            << "(Connection::close) thread_.join(); -- done";
+        // log.debug
+        //     << "(Connection::close) conn_->close();";
+        // conn_->close();
+        // log.debug
+        //     << "(Connection::close) conn_->close(); -- done";
+    }
+    log.debug
+        << "(Connection::close) if (thread_.joinable()) { -- done";
+}
+
+/**
+ * @brief Check if the connection's
+ * thread is joinable
+ * @return `Connection::thread_::joinable`
+ */
+bool Connection::joinable() {
+    return thread_.joinable();
+}
+
 /**
  * @brief Store the pair of
  * thread and connection
@@ -7,29 +127,65 @@
  * @param connection Connection
  * that the thread is working with
  */
-void WsManager::store(std::thread&& thread,
-        crow::websocket::connection& connection) {
-    if (ipConns.count(connection.get_remote_ip())) {
-        std::cout <<
-            "Found existing connection from " <<
-            connection.get_remote_ip() <<
-            std::endl;
-        ipConns[connection.get_remote_ip()]->close();
-        std::cout <<
-            "Closed connection\n";
-        ipConns.erase(connection.get_remote_ip());
-        std::cout <<
-            "Erased connection IP\n";
+void Manager::store(const std::string& ip,
+        crow::websocket::connection& conn,
+        std::thread&& thread,
+        bool& shutdownFlag,
+        std::shared_ptr<
+            TQueue<
+            std::unique_ptr<
+            NAction::TAction>>> queue) {
+    log.debug
+        << "(Manager::store) if (ipConns.count(ip)) {";
+    if (ipConns.count(ip)) {
+        log.debug
+            << "(Manager::store) isDuplicate[ip] = true;";
+        isDuplicate[ip] = true;
+        log.debug
+            << "(Manager::store) isDuplicate[ip] = true; -- done";
+        log.debug
+            << "(Manager::store) ipConns[ip]->close();";
+        ipConns[ip]->close();
+        log.debug
+            << "(Manager::store) ipConns[ip]->close(); -- done";
+        log.debug
+            << "(Manager::store) conns.second(&conn) = Ws::Connection(";
+        conns.second(&conn) = Ws::Connection(
+            ip,
+            conn,
+            std::move(thread),
+            shutdownFlag,
+            queue
+        );
+        log.debug
+            << "(Manager::store) conns.second(&conn) = Ws::Connection( -- done";
+        log.debug
+            << "(Manager::store) if (ipConns.count(ip)) { -- done";
+        return;
     }
-    connRefsThreads[&connection] = std::move(thread);
-    std::cout <<
-        "Assigned thread\n";
-    shutdownFlags[&connection] = false;
-    std::cout <<
-        "shutdownFlag = false\n";
-    ipConns[connection.get_remote_ip()] = &connection;
-    std::cout <<
-        "Assigned connection to ip\n";
+    log.debug
+        << "(Manager::store) if (ipConns.count(ip)) { -- done";
+    log.debug
+        << "(Manager::store) ipConns[ip] = &conn;";
+    ipConns[ip] = &conn;
+    log.debug
+        << "(Manager::store) ipConns[ip] = &conn; -- done";
+    log.debug
+        << "(Manager::store) connIps[&conn] = ip;";
+    connIps[&conn] = ip;
+    log.debug
+        << "(Manager::store) connIps[&conn] = ip; -- done";
+    log.debug
+        << "(Manager::store) conns.first(&conn) = Ws::Connection(";
+    conns.first(&conn) = Ws::Connection(
+        ip,
+        conn,
+        std::move(thread),
+        shutdownFlag,
+        queue
+    );
+    log.debug
+        << "(Manager::store) conns.first(&conn) = Ws::Connection( -- done";
 }
 
 /**
@@ -38,42 +194,77 @@ void WsManager::store(std::thread&& thread,
  * Remove their pair from memory
  * @param connection Closed connection
  */
-void WsManager::remove(crow::websocket::connection& connection,
-        std::shared_ptr<
-            TQueue<
-                std::unique_ptr<
-                    NAction::TAction>>>& queue) {
-    std::cout <<
-        "(WsManager::remove) Removing connection...\n";
-    std::cout <<
-        "(WsManager::remove) Setting shutdownFlag = true\n";
-    shutdownFlags[&connection] = true;
-    std::cout <<
-        "(WsManager::remove) Pushing nullptr to queue\n";
-    queue->push(nullptr);
-    std::cout <<
-        "(WsManager::remove) Taking thread\n";
-    auto& thread = connRefsThreads[&connection];
-    std::cout <<
-        "(WsManager::remove) Checking thread joinable\n";
-    if (thread.joinable()) {
-        std::cout <<
-            "(WsManager::remove) Joining thread\n";
-        thread.join();
-        std::cout <<
-            "(WsManager::remove) Joined thread\n";
+void Manager::remove(crow::websocket::connection& connection) {
+    log.debug
+        << "(Manager::remove) Enter";
+    if (!connIps.count(&connection)) {
+        log.error
+            << "Error in removing connection."
+            << "Reason: Can not find";
+        return;
     }
+    log.debug
+        << "(Manager::remove) auto ip = connIps[&connection];";
+    auto ip = connIps[&connection];
+    log.debug
+        << "(Manager::remove) auto ip = connIps[&connection]; -- done";
+    log.debug
+        << "(Manager::remove) if (isDuplicate[ip]) {";
+    if (isDuplicate[ip]) {
+        log.debug
+            << "(Manager::remove) isDuplicate[ip] = false;";
+        isDuplicate[ip] = false;
+        log.debug
+            << "(Manager::remove) isDuplicate[ip] = false; -- done";
+        log.debug
+            << "(Manager::remove) conns.second(&connection).close();";
+        conns.first(&connection).close();
+        log.debug
+            << "(Manager::remove) conns.second(&connection).close(); -- done";
+        log.debug
+            << "(Manager::remove) conns.swap(&connection);";
+        conns.swap(&connection);
+        log.debug
+            << "(Manager::remove) conns.swap(&connection); -- done";
+        return;
+    }
+    log.debug
+        << "(Manager::remove) if (isDuplicate[ip]) { -- done";
+    log.debug
+        << "(Manager::remove) conns.first(&connection).close();";
+    conns.first(&connection).close();
+    log.debug
+        << "(Manager::remove) conns.first(&connection).close(); -- done";
+    log.debug
+        << "(Manager::remove) conns.clear(&connection);";
+    conns.clear(&connection);
+    log.debug
+        << "(Manager::remove) conns.clear(&connection); -- done";
+    log.debug
+        << "(Manager::remove) ipConns.erase(connIps[&connection]);";
+    ipConns.erase(connIps[&connection]);
+    log.debug
+        << "(Manager::remove) ipConns.erase(connIps[&connection]); -- done";
+    log.debug
+        << "(Manager::remove) connIps.erase(&connection);";
+    connIps.erase(&connection);
+    log.debug
+        << "(Manager::remove) connIps.erase(&connection); -- done";
 }
 
 /**
  * @brief Join all threads.
  * Clear memory
  */
-void WsManager::removeAll() {
-    for (auto& [connRef, thread] : connRefsThreads) {
-        if (thread.joinable()) {
-            thread.join();
-        }
+void Manager::removeAll() {
+    for (auto it = ipConns.begin();
+         it != ipConns.end();
+         /* iterator is changed
+            in erase */) {
+        it->second->close();
+        conns.clear(it->second);
+        connIps.erase(it->second);
+        it = ipConns.erase(it);
     }
 }
 
@@ -81,8 +272,10 @@ void WsManager::removeAll() {
  * @brief Get the shutdown flag
  * of the connection
  * @param connection WebSocket connection
- * @return `WsManager::shutdownFlags[&connection]`
+ * @return `Manager::shutdownFlags[&connection]`
  */
-const bool& WsManager::shutdownFlag(crow::websocket::connection& connection) {
+const bool& Manager::shutdownFlag(crow::websocket::connection& connection) {
     return shutdownFlags[&connection];
 }
+
+} // namespace Ws
