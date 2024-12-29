@@ -9,7 +9,7 @@ std::atomic<ELogLevel> TLogger::level_{ELogLevel::DEBUG};
  * name for any message
  */
 TLogger::TLogger(const std::string& serviceName)
-    : error("[ERROR] " + serviceName + ": ",
+    : error("[  ERROR] " + serviceName + ": ",
         ELogLevel::ERROR,
         level_,
         mutex)
@@ -17,11 +17,11 @@ TLogger::TLogger(const std::string& serviceName)
         ELogLevel::WARNING,
         level_,
         mutex)
-    , info("[INFO] " + serviceName + ": ",
+    , info("[   INFO] " + serviceName + ": ",
         ELogLevel::INFO,
         level_,
         mutex)
-    , debug("[DEBUG] " + serviceName + ": ",
+    , debug("[  DEBUG] " + serviceName + ": ",
         ELogLevel::DEBUG,
         level_,
         mutex)

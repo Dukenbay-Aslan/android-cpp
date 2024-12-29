@@ -137,7 +137,6 @@ int main(int argc, char *argv[]) {
 
     log.info
         << "Joined all threads"
-        << std::endl;
-
+        << "Returning 0";
     return 0;
 }
