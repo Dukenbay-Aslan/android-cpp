@@ -5,7 +5,7 @@
 
 #include "../action/action.h"
 #include "../requests/manual.h"
-#include "../wsmanager/wsmanager.h"
+#include "../ws/manager.h"
 #include "../../base/logger/logger.h"
 #include "../../base/IService.h"
 #include "../../base/Queue.h"

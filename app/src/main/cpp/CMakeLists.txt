@@ -52,7 +52,8 @@ set(SOURCE_FILES
     src/app/action/action.cpp
     src/app/requests/manual.cpp
     src/app/services/SActions.cpp
-    src/app/wsmanager/wsmanager.cpp
+    src/app/ws/connection.cpp
+    src/app/ws/manager.cpp
     src/base/config/Config.cpp
     src/base/helpers/mappers.cpp
     src/base/helpers/utils.cpp
