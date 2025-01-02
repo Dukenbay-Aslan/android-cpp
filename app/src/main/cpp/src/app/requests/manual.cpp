@@ -103,6 +103,8 @@ void TApplication::run() {
     at runtime that signal will be sent to
     signalHandler function in Main.cpp. */
     app_.signal_clear();
+    /* Set crow's log level to WARNING */
+    app_.loglevel(crow::LogLevel::WARNING);
     log.debug <<
         "app_.signal_clear()";
     app_
