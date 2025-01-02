@@ -41,12 +41,13 @@ std::condition_variable shutdownCv;
  * @param sig Signal received
  */
 void signalHandler(int sig) {
-    std::cout <<
-        "(" <<
-        utils::now() <<
-        ") [INFO] " <<
-        "(signalHandler) Received signal: " <<
-        sig;
+    std::cout
+        << "("
+        << utils::now()
+        << ") [INFO] "
+        << "(signalHandler) Received signal: "
+        << sig
+        << std::endl;
     shutdownFlag.store(true);
     shutdownCv.notify_one();
 }
@@ -126,7 +127,11 @@ int main(int argc, char *argv[]) {
             }
         );
         lock.unlock();
-        shutdownCv.notify_all();
+    }
+
+    // Shutting down all services
+    for (auto& service : services) {
+        service->shutdown();
     }
 
     for (auto& thread : threads) {
